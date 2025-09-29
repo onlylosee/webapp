@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TON STOCKER</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #1a237e;
+            --secondary-color: #0d47a1;
+            --accent-color: #3f51b5;
+            --background-dark: #0a0a0a;
+            --surface-dark: #1a1a1a;
+            --surface-light: #2a2a2a;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --success-color: #4caf50;
+            --error-color: #f44336;
+            --warning-color: #ff9800;
+            --border-color: #333333;
+            --gradient-primary: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            --gradient-card: linear-gradient(145deg, var(--surface-dark), var(--surface-light));
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            --border-radius: 12px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--background-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+            padding-bottom: 60px;
+        }
+
+        .app-container {
+            max-width: 480px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: var(--background-dark);
+            position: relative;
+        }
+
+        .header {
+            background: var(--gradient-primary);
+            padding: 20px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .user-info {
+            background: var(--gradient-card);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .user-name {
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+
+        .balance-amount {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .balance-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--surface-dark);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent-color);
+        }
+
+        .stat-card h3 {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .stat-value.green {
+            color: var(--success-color);
+        }
+
+        .section {
+            background: var(--gradient-card);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        .section h3 {
+            margin-bottom: 15px;
+            color: var(--text-primary);
+        }
+
+        .deposits-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .deposit-item {
+            background: var(--surface-dark);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .deposit-info h4 {
+            color: var(--text-primary);
+            margin-bottom: 5px;
+        }
+
+        .deposit-info p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .deposit-profit {
+            text-align: right;
+        }
+
+        .profit-amount {
+            color: var(--success-color);
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .referral-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .referral-level {
+            background: var(--surface-dark);
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .referral-level span {
+            color: var(--text-secondary);
+        }
+
+        .referral-level strong {
+            color: var(--success-color);
+            font-size: 1.2rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+
+        .error {
+            background: var(--error-color);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .connection-status {
+            background: var(--warning-color);
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 360px) {
+            .balance-amount {
+                font-size: 2.5rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .deposit-item {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <h1 class="logo">TON STOCKER</h1>
+        </header>
+
+        <main class="content">
+            <div id="content">
+                <div class="loading">
+                    <h2>Загрузка данных...</h2>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // ⚠️ ВАЖНО: Замените на ваш реальный API URL от туннеля
+        const API_BASE_URL = 'https://your-tunnel-url.localhost.run/api';
+        // Пример: 'https://abc123.localhost.run/api'
+
+        // Telegram WebApp initialization
+        let tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.ready();
+
+        let userData = {
+            userId: null,
+            balance: 0,
+            deposits: [],
+            referrals: { level1: 0, level2: 0, level3: 0 }
+        };
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });
+
+        function initializeApp() {
+            // Получаем user data из Telegram
+            if (tg.initDataUnsafe.user) {
+                userData.userId = tg.initDataUnsafe.user.id;
+                loadUserData();
+            } else {
+                showError('Не удалось получить данные пользователя из Telegram');
+            }
+
+            // Настройка главной кнопки Telegram
+            tg.MainButton.setText('Обновить данные');
+            tg.MainButton.onClick(loadUserData);
+            tg.MainButton.show();
+        }
+
+        async function loadUserData() {
+            showLoading();
+            
+            try {
+                if (!userData.userId) {
+                    throw new Error('ID пользователя не определен');
+                }
+                
+                // Показываем статус подключения
+                showConnectionStatus('Подключение к серверу...');
+                
+                const response = await fetch(`${API_BASE_URL}/user/${userData.userId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    userData = {
+                        ...userData,
+                        balance: result.data.balance,
+                        deposits: result.data.deposits,
+                        referrals: result.data.referrals,
+                        username: result.data.username,
+                        totalInvested: result.data.total_invested,
+                        currentProfit: result.data.current_profit,
+                        depositsCount: result.data.deposits_count
+                    };
+                    
+                    hideConnectionStatus();
+                    updateUI();
+                } else {
+                    throw new Error(result.error || 'Ошибка получения данных');
+                }
+                
+            } catch (error) {
+                console.error('Ошибка загрузки данных:', error);
+                showError(`Ошибка подключения: ${error.message}`);
+                
+                // Показываем пустые данные при ошибке
+                userData = {
+                    ...userData,
+                    balance: 0,
+                    deposits: [],
+                    referrals: { level1: 0, level2: 0, level3: 0 }
+                };
+                updateUI();
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function updateUI() {
+            const content = `
+                <div class="user-info">
+                    <div class="user-name">Добро пожаловать, ${userData.username || 'Пользователь'}!</div>
+                    <div class="balance-amount">₽${userData.balance.toFixed(2)}</div>
+                    <p class="balance-subtitle">Доступно для инвестиций</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Всего инвестировано</h3>
+                        <p class="stat-value">₽${(userData.totalInvested || 0).toFixed(2)}</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Текущая прибыль</h3>
+                        <p class="stat-value green">₽${(userData.currentProfit || 0).toFixed(2)}</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Депозитов</h3>
+                        <p class="stat-value">${userData.depositsCount || 0}</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Рефералов</h3>
+                        <p class="stat-value">${userData.referrals.level1 + userData.referrals.level2 + userData.referrals.level3}</p>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Активные депозиты</h3>
+                    <div class="deposits-list">
+                        ${renderDeposits()}
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Партнерская программа</h3>
+                    <div class="referral-stats">
+                        ${renderReferrals()}
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('content').innerHTML = content;
+        }
+
+        function renderDeposits() {
+            if (!userData.deposits || userData.deposits.length === 0) {
+                return '<div class="empty-state"><p>У вас пока нет активных депозитов</p></div>';
+            }
+
+            return userData.deposits.map(deposit => {
+                const startDate = new Date(deposit.start).toLocaleDateString('ru-RU');
+                const profit = calculateDepositProfit(deposit);
+                
+                return `
+                    <div class="deposit-item">
+                        <div class="deposit-info">
+                            <h4>Депозит ₽${deposit.amount.toFixed(2)}</h4>
+                            <p>Дата создания: ${startDate}</p>
+                            <p>Доходность: 4% в день</p>
+                        </div>
+                        <div class="deposit-profit">
+                            <div class="profit-amount">+₽${profit.toFixed(2)}</div>
+                            <p>Прибыль</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderReferrals() {
+            return `
+                <div class="referral-level">
+                    <span>1 уровень (20%)</span>
+                    <strong>${userData.referrals.level1}</strong>
+                </div>
+                <div class="referral-level">
+                    <span>2 уровень (3%)</span>
+                    <strong>${userData.referrals.level2}</strong>
+                </div>
+                <div class="referral-level">
+                    <span>3 уровень (1%)</span>
+                    <strong>${userData.referrals.level3}</strong>
+                </div>
+            `;
+        }
+
+        function calculateDepositProfit(deposit) {
+            if (!deposit.start) return 0;
+            
+            const now = new Date();
+            const startTime = new Date(deposit.start);
+            const elapsed = now - startTime;
+            const elapsedHours = elapsed / (1000 * 60 * 60);
+            
+            const hourlyProfit = deposit.amount * 0.04 / 24;
+            const profit = hourlyProfit * elapsedHours;
+            
+            const collected = deposit.collected_profit || 0;
+            return Math.max(0, profit - collected);
+        }
+
+        function showLoading() {
+            // Функция уже не нужна, так как контент обновляется
+        }
+
+        function hideLoading() {
+            // Функция уже не нужна
+        }
+
+        function showError(message) {
+            document.getElementById('content').innerHTML = `
+                <div class="error">
+                    <h2>Ошибка</h2>
+                    <p>${message}</p>
+                    <p style="margin-top: 10px; font-size: 0.9rem;">
+                        Убедитесь, что API сервер запущен и туннель активен
+                    </p>
+                </div>
+            `;
+        }
+
+        function showConnectionStatus(message) {
+            const existing = document.querySelector('.connection-status');
+            if (existing) existing.remove();
+            
+            const status = document.createElement('div');
+            status.className = 'connection-status';
+            status.textContent = message;
+            document.body.insertBefore(status, document.body.firstChild);
+        }
+
+        function hideConnectionStatus() {
+            const status = document.querySelector('.connection-status');
+            if (status) status.remove();
+        }
+
+        // Автообновление каждые 30 секунд
+        setInterval(() => {
+            if (userData.userId) {
+                loadUserData();
+            }
+        }, 30000);
+    </script>
+</body>
+</html>
