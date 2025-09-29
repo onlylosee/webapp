@@ -316,57 +316,68 @@
             document.getElementById('content').innerHTML = instructions;
         }
 
-        async function loadUserData() {
-            showConnectionStatus('Подключение к серверу...');
+    async function loadUserData() {
+        showConnectionStatus('Подключение к серверу...');
+        
+        try {
+            if (!userData.userId) {
+                throw new Error('ID пользователя не определен');
+            }
             
-            try {
-                if (!userData.userId) {
-                    throw new Error('ID пользователя не определен');
-                }
+            console.log(`Запрос к: ${API_BASE_URL}/user/${userData.userId}`);
+            
+            // Добавляем режим no-cors и правильные заголовки
+            const response = await fetch(`${API_BASE_URL}/user/${userData.userId}`, {
+                method: 'GET',
+                mode: 'cors', // Важно: используем cors режим
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                credentials: 'omit' // Не отправляем куки
+            });
+            
+            console.log('Response status:', response.status);
+            console.log('Response ok:', response.ok);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            
+            const result = await response.json();
+            console.log('API response:', result);
+            
+            if (result.success) {
+                userData = {
+                    ...userData,
+                    balance: result.data.balance,
+                    deposits: result.data.deposits,
+                    referrals: result.data.referrals,
+                    username: result.data.username,
+                    totalInvested: result.data.total_invested,
+                    currentProfit: result.data.current_profit,
+                    depositsCount: result.data.deposits_count
+                };
                 
-                console.log(`Запрос к: ${API_BASE_URL}/user/${userData.userId}`);
-                
-                const response = await fetch(`${API_BASE_URL}/user/${userData.userId}`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                });
-                
-                console.log('Response status:', response.status);
-                console.log('Response headers:', response.headers);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                }
-                
-                const result = await response.json();
-                console.log('API response:', result);
-                
-                if (result.success) {
-                    userData = {
-                        ...userData,
-                        balance: result.data.balance,
-                        deposits: result.data.deposits,
-                        referrals: result.data.referrals,
-                        username: result.data.username,
-                        totalInvested: result.data.total_invested,
-                        currentProfit: result.data.current_profit,
-                        depositsCount: result.data.deposits_count
-                    };
-                    
-                    hideConnectionStatus();
-                    updateUI();
-                } else {
-                    throw new Error(result.error || 'Ошибка получения данных');
-                }
-                
-            } catch (error) {
-                console.error('Ошибка загрузки данных:', error);
                 hideConnectionStatus();
+                updateUI();
+            } else {
+                throw new Error(result.error || 'Ошибка получения данных');
+            }
+            
+        } catch (error) {
+            console.error('Ошибка загрузки данных:', error);
+            hideConnectionStatus();
+            
+            // Более детальная информация об ошибке
+            if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                showError('Ошибка сети: проверьте, что API сервер и туннель работают');
+            } else {
                 showError(`Ошибка: ${error.message}`);
             }
         }
+    }
+
 
         function updateUI() {
             const content = `
