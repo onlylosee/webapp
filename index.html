@@ -200,7 +200,7 @@
 
     <script>
         // ⚠️ ВАЖНО: Замените на ваш реальный туннель URL
-        const API_BASE_URL = 'https://nelia-unhefted-edward.ngrok-free.dev/api';
+        const API_BASE_URL = 'https://nelia-unhefted-edward.ngrok-free.dev';
         // Пример: const API_BASE_URL = 'https://abc123def456.localhost.run/api';
 
         // Telegram WebApp initialization
@@ -245,8 +245,8 @@
                     <h3>Отладочная информация:</h3>
                     <p><strong>User ID:</strong> ${userData.userId}</p>
                     <p><strong>API URL:</strong> ${API_BASE_URL}</p>
-                    <p><strong>Test URL:</strong> ${API_BASE_URL}/health</p>
-                    <p><strong>User URL:</strong> ${API_BASE_URL}/user/${userData.userId}</p>
+                    <p><strong>Test URL:</strong> ${API_BASE_URL}/api/health</p>
+                    <p><strong>User URL:</strong> ${API_BASE_URL}/api/user/${userData.userId}</p>
                     <button onclick="testConnection()" style="background: var(--accent-color); color: white; border: none; padding: 8px 16px; border-radius: 4px; margin-top: 10px;">
                         Тест подключения
                     </button>
@@ -262,7 +262,7 @@
             try {
                 // Тест 1: Проверяем health endpoint
                 console.log('Тест 1: Проверка health endpoint');
-                const healthResponse = await fetch(`${API_BASE_URL}/health`, {
+                const healthResponse = await fetch(`${API_BASE_URL}/api/health`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -324,10 +324,10 @@
                 throw new Error('ID пользователя не определен');
             }
             
-            console.log(`Запрос к: ${API_BASE_URL}/user/${userData.userId}`);
+            console.log(`Запрос к: ${API_BASE_URL}/api/user/${userData.userId}`);
             
             // Добавляем режим no-cors и правильные заголовки
-            const response = await fetch(`${API_BASE_URL}/user/${userData.userId}`, {
+            const response = await fetch(`${API_BASE_URL}/api/user/${userData.userId}`, {
                 method: 'GET',
                 mode: 'cors', // Важно: используем cors режим
                 headers: {
