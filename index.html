@@ -327,15 +327,20 @@
             console.log(`Запрос к: ${API_BASE_URL}/user/${userData.userId}`);
             
             // Добавляем режим no-cors и правильные заголовки
-            const response = await fetch(`${API_BASE_URL}/user/${userData.userId}`, {
+            fetch(`${API_BASE_URL}/user/${userData.userId}`, {
                 method: 'GET',
-                mode: 'cors', // Важно: используем cors режим
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                credentials: 'omit' // Не отправляем куки
+                mode: 'cors',
+                // Уберите заголовки Content-Type, Authorization
             });
+            // const response = await fetch(`${API_BASE_URL}/user/${userData.userId}`, {
+            //     method: 'GET',
+            //     mode: 'cors', // Важно: используем cors режим
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //         'Accept': 'application/json'
+            //     },
+            //     credentials: 'omit' // Не отправляем куки
+            // });
             
             console.log('Response status:', response.status);
             console.log('Response ok:', response.ok);
