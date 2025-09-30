@@ -327,7 +327,7 @@
             console.log(`Запрос к: ${API_BASE_URL}/user/${userData.userId}`);
             
             // Добавляем режим no-cors и правильные заголовки
-            fetch(`${API_BASE_URL}/user/${userData.userId}`, {
+            const response = await fetch(`${API_BASE_URL}/user/${userData.userId}`, {
                 method: 'GET',
                 mode: 'cors',
                 // Уберите заголовки Content-Type, Authorization
