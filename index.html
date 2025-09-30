@@ -330,6 +330,7 @@
             const response = await fetch(`${API_BASE_URL}/user/${userData.userId}`, {
                 method: 'GET',
                 mode: 'cors',
+                credentials: 'omit' // Не отправляем куки
                 // Уберите заголовки Content-Type, Authorization
             });
             // const response = await fetch(`${API_BASE_URL}/user/${userData.userId}`, {
@@ -339,7 +340,7 @@
             //         'Content-Type': 'application/json',
             //         'Accept': 'application/json'
             //     },
-            //     credentials: 'omit' // Не отправляем куки
+
             // });
             
             console.log('Response status:', response.status);
