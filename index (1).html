@@ -1,0 +1,1518 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#1e40af" />
+    <title>TON STOCKER</title>
+    
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    
+    <style>
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+
+        body {
+          font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+          background: #0a0a0a;
+          color: #ffffff;
+          line-height: 1.5;
+          overflow-x: hidden;
+          -webkit-font-smoothing: antialiased;
+          padding-bottom: 70px;
+        }
+
+        .app {
+          max-width: 500px;
+          margin: 0 auto;
+          min-height: 100vh;
+          background: #0a0a0a;
+        }
+
+        /* Header - ПОМЕНЯЛ МЕСТАМИ */
+        .header {
+          background: #1a1a1a;
+          padding: 1rem 1.5rem;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+          position: sticky;
+          top: 0;
+          z-index: 100;
+        }
+
+        .user-info {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+        }
+
+        .user-avatar {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1.2rem;
+          font-weight: 700;
+          color: white;
+          border: 2px solid rgba(59, 130, 246, 0.5);
+        }
+
+        .user-name {
+          font-size: 1rem;
+          font-weight: 600;
+          color: #ffffff;
+        }
+
+        .refresh-btn {
+          background: rgba(59, 130, 246, 0.15);
+          border: 1px solid rgba(59, 130, 246, 0.3);
+          color: #3b82f6;
+          padding: 0.5rem;
+          border-radius: 8px;
+          cursor: pointer;
+          transition: all 0.2s;
+          font-size: 1.2rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .refresh-btn:active {
+          transform: rotate(180deg);
+          background: rgba(59, 130, 246, 0.25);
+        }
+
+        /* Content */
+        .content {
+          min-height: calc(100vh - 140px);
+          padding-bottom: 2rem;
+        }
+
+        .screen {
+          display: none;
+        }
+
+        .screen.active {
+          display: block;
+        }
+
+        /* Balance Section - КРАСИВЫЕ БЛОКИ */
+        .balance-section {
+          padding: 1.5rem;
+        }
+
+        .balance-grid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 1rem;
+          margin-bottom: 1rem;
+        }
+
+        .balance-card {
+          background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+          border: 1px solid rgba(59, 130, 246, 0.3);
+          border-radius: 16px;
+          padding: 1.5rem;
+          text-align: center;
+          transition: all 0.2s;
+        }
+
+        .balance-card:hover {
+          border-color: rgba(59, 130, 246, 0.5);
+          transform: translateY(-2px);
+          box-shadow: 0 8px 25px rgba(59, 130, 246, 0.2);
+        }
+
+        .balance-label {
+          color: #94a3b8;
+          font-size: 0.85rem;
+          margin-bottom: 0.75rem;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          font-weight: 500;
+        }
+
+        .balance-amount {
+          font-size: 2rem;
+          font-weight: 700;
+          color: #3b82f6;
+          line-height: 1;
+        }
+
+        .balance-large {
+          grid-column: 1 / -1;
+          background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+          border: none;
+        }
+
+        .balance-large .balance-label {
+          color: rgba(255, 255, 255, 0.8);
+        }
+
+        .balance-large .balance-amount {
+          font-size: 2.5rem;
+          color: #ffffff;
+        }
+
+        .btn {
+          padding: 0.75rem 2rem;
+          border-radius: 12px;
+          border: none;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s;
+          font-size: 1rem;
+          width: 100%;
+          margin-top: 1rem;
+        }
+
+        .btn-primary {
+          background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+          color: #ffffff;
+          box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-primary:active {
+          transform: scale(0.95);
+        }
+
+        /* Bank Progress */
+        .bank-section {
+          padding: 0 1.5rem 1.5rem;
+        }
+
+        .bank-card {
+          background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+          border: 1px solid rgba(34, 197, 94, 0.3);
+          border-radius: 16px;
+          padding: 1.5rem;
+        }
+
+        .bank-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 1rem;
+        }
+
+        .bank-title {
+          font-size: 1rem;
+          color: #ffffff;
+          font-weight: 600;
+        }
+
+        .bank-rate {
+          font-size: 1.3rem;
+          font-weight: 700;
+          color: #22c55e;
+        }
+
+        .progress-bar {
+          background: rgba(34, 197, 94, 0.15);
+          height: 10px;
+          border-radius: 10px;
+          overflow: hidden;
+          margin-bottom: 1rem;
+        }
+
+        .progress-fill {
+          background: linear-gradient(90deg, #22c55e 0%, #16a34a 100%);
+          height: 100%;
+          border-radius: 10px;
+          transition: width 0.5s ease;
+          box-shadow: 0 0 15px rgba(34, 197, 94, 0.6);
+        }
+
+        .bank-stats {
+          display: flex;
+          justify-content: space-between;
+          font-size: 0.9rem;
+        }
+
+        .bank-stats span {
+          color: #94a3b8;
+        }
+
+        .bank-stats strong {
+          color: #ffffff;
+          font-weight: 600;
+        }
+
+        /* Live Transactions */
+        .transactions-section {
+          padding: 0 1.5rem 1.5rem;
+        }
+
+        .section-header {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          padding: 0 0 1rem;
+          color: #ffffff;
+          font-size: 1rem;
+          font-weight: 600;
+        }
+
+        .live-indicator {
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          background: #22c55e;
+          animation: pulse 2s infinite;
+          box-shadow: 0 0 10px rgba(34, 197, 94, 0.8);
+        }
+
+        @keyframes pulse {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.5; transform: scale(0.9); }
+        }
+
+        .transaction-item {
+          background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+          border: 1px solid rgba(59, 130, 246, 0.2);
+          border-radius: 12px;
+          padding: 1rem 1.25rem;
+          margin-bottom: 0.75rem;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          transition: all 0.2s;
+        }
+
+        .transaction-item:hover {
+          border-color: rgba(59, 130, 246, 0.4);
+          transform: translateX(4px);
+        }
+
+        .transaction-left {
+          flex: 1;
+        }
+
+        .transaction-id {
+          font-size: 0.85rem;
+          color: #64748b;
+          margin-bottom: 0.25rem;
+          font-weight: 500;
+        }
+
+        .transaction-type {
+          font-size: 0.95rem;
+          color: #3b82f6;
+          font-weight: 500;
+        }
+
+        .transaction-right {
+          text-align: right;
+        }
+
+        .transaction-date {
+          font-size: 0.75rem;
+          color: #64748b;
+          margin-bottom: 0.25rem;
+        }
+
+        .transaction-amount {
+          font-size: 1.2rem;
+          font-weight: 700;
+          color: #fbbf24;
+        }
+
+        /* Portfolio */
+        .portfolio-stats {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 1rem;
+          padding: 1.5rem;
+        }
+
+        .stat-card {
+          background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+          border: 1px solid rgba(59, 130, 246, 0.3);
+          border-radius: 16px;
+          padding: 1.5rem;
+          text-align: center;
+          transition: all 0.2s;
+        }
+
+        .stat-card:hover {
+          border-color: rgba(59, 130, 246, 0.5);
+          transform: translateY(-2px);
+        }
+
+        .stat-label {
+          font-size: 0.85rem;
+          color: #94a3b8;
+          margin-bottom: 0.75rem;
+          font-weight: 500;
+        }
+
+        .stat-value {
+          font-size: 1.8rem;
+          font-weight: 700;
+          color: #3b82f6;
+        }
+
+        .collect-section {
+          padding: 0 1.5rem 1.5rem;
+        }
+
+        .collect-card {
+          background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+          border: 1px solid rgba(34, 197, 94, 0.3);
+          border-radius: 16px;
+          padding: 1.5rem;
+          text-align: center;
+        }
+
+        .collect-amount {
+          font-size: 2.5rem;
+          font-weight: 700;
+          color: #22c55e;
+          margin-bottom: 1rem;
+        }
+
+        .collect-btn {
+          width: 100%;
+          background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+          color: #ffffff;
+          padding: 1rem;
+          border-radius: 12px;
+          border: none;
+          font-size: 1.1rem;
+          font-weight: 700;
+          cursor: pointer;
+          transition: all 0.2s;
+          box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);
+        }
+
+        .collect-btn:active {
+          transform: scale(0.95);
+        }
+
+        .collect-btn:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+
+        /* Bottom Navigation - КАК НА СКРИНШОТЕ */
+        /* Bottom Navigation - ИСПРАВЛЕНО */
+        .bottom-nav {
+          position: fixed;
+          bottom: 0;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 100%;
+          max-width: 500px;
+          background: #1a1a1a;
+          border-top: 1px solid rgba(59, 130, 246, 0.2);
+          display: flex;
+          justify-content: space-around;
+          align-items: flex-end;
+          padding: 0.5rem 0.5rem env(safe-area-inset-bottom, 0.75rem);
+          z-index: 1000;
+          height: 65px;
+        }
+        
+        .nav-item {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 0.2rem;
+          padding: 0.25rem 0.5rem;
+          cursor: pointer;
+          transition: all 0.2s;
+          flex: 1;
+          max-width: 70px;
+          height: 50px;
+        }
+        
+        .nav-item.center {
+          transform: translateY(-20px);
+          background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+          border-radius: 50%;
+          padding: 0.75rem;
+          width: 56px;
+          height: 56px;
+          box-shadow: 0 4px 20px rgba(59, 130, 246, 0.5);
+          justify-content: center;
+          align-items: center;
+        }
+        
+        .nav-icon {
+          font-size: 1.3rem;
+          color: #ffffff;
+          transition: all 0.2s;
+          line-height: 1;
+        }
+        
+        .nav-item:not(.active):not(.center) .nav-icon {
+          color: #64748b;
+        }
+        
+        .nav-item.active:not(.center) .nav-icon {
+          color: #3b82f6;
+        }
+        
+        .nav-item.center .nav-icon {
+          font-size: 1.8rem;
+          color: #ffffff;
+        }
+        
+        .nav-label {
+          font-size: 0.65rem;
+          color: #64748b;
+          font-weight: 500;
+          transition: all 0.2s;
+          line-height: 1;
+        }
+        
+        .nav-item.active .nav-label {
+          color: #3b82f6;
+        }
+        
+        .nav-item.center .nav-label {
+          display: none;
+        }
+        
+        /* Balance Section - ЯРКАЯ КНОПКА */
+        .balance-section {
+          padding: 1.5rem;
+          padding-bottom: 0;
+        }
+        
+        .balance-grid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 1rem;
+          margin-bottom: 1rem;
+        }
+        
+        .balance-card {
+          background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+          border: 1px solid rgba(59, 130, 246, 0.3);
+          border-radius: 16px;
+          padding: 1.5rem;
+          text-align: center;
+          transition: all 0.2s;
+        }
+        
+        .balance-card:hover {
+          border-color: rgba(59, 130, 246, 0.5);
+          transform: translateY(-2px);
+          box-shadow: 0 8px 25px rgba(59, 130, 246, 0.2);
+        }
+        
+        .balance-label {
+          color: #94a3b8;
+          font-size: 0.85rem;
+          margin-bottom: 0.75rem;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          font-weight: 500;
+        }
+        
+        .balance-amount {
+          font-size: 2rem;
+          font-weight: 700;
+          color: #3b82f6;
+          line-height: 1;
+        }
+        
+        .balance-large {
+          grid-column: 1 / -1;
+          background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+          border: none;
+        }
+        
+        .balance-large .balance-label {
+          color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .balance-large .balance-amount {
+          font-size: 2.5rem;
+          color: #ffffff;
+          margin-bottom: 1rem;
+        }
+        
+        /* ЯРКАЯ КНОПКА ПОПОЛНИТЬ */
+        .btn-deposit {
+          width: 100%;
+          padding: 1rem;
+          border-radius: 12px;
+          border: none;
+          font-weight: 700;
+          cursor: pointer;
+          transition: all 0.2s;
+          font-size: 1.1rem;
+          background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+          color: #ffffff;
+          box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+        
+        .btn-deposit:active {
+          transform: scale(0.95);
+          box-shadow: 0 2px 8px rgba(34, 197, 94, 0.4);
+        }
+        
+        .btn-deposit:hover {
+          background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+          box-shadow: 0 6px 20px rgba(34, 197, 94, 0.5);
+        }
+        
+        /* Padding для контента чтобы не закрывался навигацией */
+        body {
+          padding-bottom: 80px;
+        }
+        
+        .content {
+          min-height: calc(100vh - 140px);
+          padding-bottom: 2rem;
+        }
+        
+        /* Для iOS safe area */
+        @supports (padding: max(0px)) {
+          .bottom-nav {
+            padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+          }
+          
+          body {
+            padding-bottom: max(80px, calc(80px + env(safe-area-inset-bottom)));
+          }
+        }
+        /* Footer Info - ИСПРАВЛЕНО */
+        .footer-info {
+          padding: 2rem 1.5rem 1.5rem;
+          margin-top: 2rem;
+          border-top: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .footer-title {
+          font-size: 0.9rem;
+          color: #94a3b8;
+          margin-bottom: 1rem;
+          font-weight: 500;
+          text-align: center;
+        }
+
+        .footer-links {
+          display: flex;
+          justify-content: center;
+          gap: 2rem;
+          margin-bottom: 1.5rem;
+        }
+
+        .footer-link {
+          color: #3b82f6;
+          text-decoration: none;
+          font-weight: 500;
+          font-size: 0.9rem;
+          transition: all 0.2s;
+          display: flex;
+          align-items: center;
+          gap: 0.25rem;
+        }
+
+        .footer-link:hover {
+          color: #60a5fa;
+        }
+
+        .footer-partner {
+          text-align: center;
+          color: #94a3b8;
+          font-size: 0.85rem;
+          margin-bottom: 1rem;
+        }
+
+        /* Crypto Icons - КАК НА СКРИНШОТЕ */
+        .crypto-icons {
+          display: flex;
+          justify-content: center;
+          gap: 1rem;
+          padding: 1rem;
+          background: rgba(30, 41, 59, 0.3);
+          border-radius: 12px;
+          border: 1px solid rgba(59, 130, 246, 0.2);
+          margin-bottom: 1rem;
+        }
+
+        .crypto-icon {
+          width: 48px;
+          height: 48px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: #1a1a1a;
+          border: 2px solid rgba(59, 130, 246, 0.3);
+          transition: all 0.2s;
+          overflow: hidden;
+        }
+
+        .crypto-icon img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .crypto-icon.bitcoin {
+          background: linear-gradient(135deg, #f7931a 0%, #f2a900 100%);
+        }
+
+        .crypto-icon.tether {
+          background: linear-gradient(135deg, #26a17b 0%, #50af95 100%);
+        }
+
+        .crypto-icon.ton {
+          background: linear-gradient(135deg, #0088cc 0%, #00a8e8 100%);
+        }
+
+        .crypto-icon.ethereum {
+          background: linear-gradient(135deg, #627eea 0%, #7e8fe7 100%);
+        }
+
+        .footer-copyright {
+          text-align: center;
+          color: #64748b;
+          font-size: 0.75rem;
+          padding: 1rem 0;
+        }
+
+        /* Card Display */
+        .card-display {
+          margin: 1.5rem;
+          background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+          border-radius: 20px;
+          padding: 2rem;
+          color: white;
+          position: relative;
+          overflow: hidden;
+          box-shadow: 0 10px 40px rgba(59, 130, 246, 0.4);
+        }
+
+        .card-balance {
+          font-size: 2.5rem;
+          font-weight: 700;
+          margin-bottom: 0.5rem;
+          position: relative;
+          z-index: 1;
+        }
+
+        /* Calculator */
+        .calculator-section {
+          padding: 0 1.5rem 1.5rem;
+        }
+
+        .calculator-card {
+          background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+          border: 1px solid rgba(59, 130, 246, 0.3);
+          border-radius: 16px;
+          padding: 1.5rem;
+        }
+
+        .calc-title {
+          font-size: 1.1rem;
+          font-weight: 600;
+          margin-bottom: 1rem;
+          color: #ffffff;
+        }
+
+        .calc-input {
+          width: 100%;
+          background: rgba(59, 130, 246, 0.1);
+          border: 1px solid rgba(59, 130, 246, 0.3);
+          border-radius: 12px;
+          padding: 1rem;
+          color: #ffffff;
+          font-size: 1.1rem;
+          margin-bottom: 1rem;
+        }
+
+        .calc-input:focus {
+          outline: none;
+          border-color: #3b82f6;
+          background: rgba(59, 130, 246, 0.15);
+        }
+
+        .calc-result {
+          text-align: center;
+          padding: 1rem;
+          background: rgba(34, 197, 94, 0.15);
+          border-radius: 12px;
+          color: #22c55e;
+          font-size: 1.2rem;
+          font-weight: 600;
+          border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        /* Info Cards */
+        .info-section {
+          padding: 1.5rem;
+        }
+
+        .info-card {
+          background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+          border: 1px solid rgba(59, 130, 246, 0.3);
+          border-radius: 16px;
+          padding: 1.5rem;
+          margin-bottom: 1rem;
+        }
+
+        .info-title {
+          font-size: 1.2rem;
+          font-weight: 600;
+          margin-bottom: 1rem;
+          color: #ffffff;
+        }
+
+        .info-text {
+          color: #94a3b8;
+          line-height: 1.7;
+          margin-bottom: 1rem;
+        }
+
+        .feature-list {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .feature-item {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          padding: 1rem;
+          background: rgba(59, 130, 246, 0.1);
+          border-radius: 12px;
+          border: 1px solid rgba(59, 130, 246, 0.2);
+          transition: all 0.2s;
+        }
+
+        .feature-item:hover {
+          background: rgba(59, 130, 246, 0.15);
+          border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .feature-icon {
+          width: 50px;
+          height: 50px;
+          border-radius: 12px;
+          background: rgba(59, 130, 246, 0.2);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1.5rem;
+        }
+
+        .feature-content h4 {
+          margin-bottom: 0.25rem;
+          color: #ffffff;
+        }
+
+        .feature-content p {
+          font-size: 0.9rem;
+          color: #94a3b8;
+        }
+
+        /* Partner Stats */
+        .partner-stats {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 1rem;
+          margin-bottom: 1rem;
+        }
+
+        .partner-stat-card {
+          background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+          border: 1px solid rgba(59, 130, 246, 0.3);
+          border-radius: 16px;
+          padding: 1.5rem;
+          text-align: center;
+        }
+
+        .partner-value {
+          font-size: 2rem;
+          font-weight: 700;
+          color: #3b82f6;
+          margin-bottom: 0.5rem;
+        }
+
+        .partner-label {
+          font-size: 0.9rem;
+          color: #94a3b8;
+        }
+
+        /* Level System */
+        .level-list {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .level-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 1rem;
+          background: rgba(59, 130, 246, 0.1);
+          border-radius: 12px;
+          border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .level-name {
+          font-weight: 600;
+          color: #ffffff;
+        }
+
+        .level-desc {
+          font-size: 0.85rem;
+          color: #94a3b8;
+        }
+
+        .level-rate {
+          font-size: 1.5rem;
+          font-weight: 700;
+          color: #fbbf24;
+        }
+
+        /* Referral Link */
+        .ref-link-section {
+          background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+          border: 1px solid rgba(59, 130, 246, 0.3);
+          border-radius: 16px;
+          padding: 1.5rem;
+        }
+
+        .ref-code {
+          background: rgba(59, 130, 246, 0.1);
+          padding: 1rem;
+          border-radius: 12px;
+          font-family: monospace;
+          font-size: 0.9rem;
+          color: #3b82f6;
+          word-break: break-all;
+          margin-bottom: 1rem;
+          border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .copy-link-btn {
+          width: 100%;
+          background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+          color: #ffffff;
+          padding: 1rem;
+          border-radius: 12px;
+          border: none;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.2s;
+          box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        }
+
+        .copy-link-btn:active {
+          transform: scale(0.95);
+        }
+
+        /* Loading */
+        .loading {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          min-height: 100vh;
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .spinner {
+          width: 50px;
+          height: 50px;
+          border: 3px solid rgba(59, 130, 246, 0.2);
+          border-top: 3px solid #3b82f6;
+          border-radius: 50%;
+          animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+          .balance-grid {
+            grid-template-columns: 1fr;
+          }
+
+          .portfolio-stats {
+            grid-template-columns: 1fr;
+          }
+
+          .footer-links {
+            flex-wrap: wrap;
+          }
+        }
+    </style>
+</head>
+<body>
+    <div id="root">
+        <div class="loading">
+            <div style="font-size: 4rem;">🚀</div>
+            <div class="spinner"></div>
+            <div style="color: #94a3b8;">Загрузка...</div>
+        </div>
+    </div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        const API_BASE_URL = 'https://server-3hznro02y-onlylosees-projects.vercel.app/api';
+        const USDT_TO_RUB = 95;
+
+        const App = () => {
+          const [userData, setUserData] = useState(null);
+          const [liveTransactions, setLiveTransactions] = useState([]);
+          const [projectBank, setProjectBank] = useState({ invested: 0, target: 100000, rate: 5.0, progress: 0 });
+          const [loading, setLoading] = useState(true);
+          const [activeScreen, setActiveScreen] = useState('main');
+          const [calcAmount, setCalcAmount] = useState('');
+          const [refreshing, setRefreshing] = useState(false);
+
+          useEffect(() => {
+            const init = async () => {
+              try {
+                let userId = 652017464;
+                let userName = 'User';
+                
+                if (window.Telegram?.WebApp) {
+                  const tg = window.Telegram.WebApp;
+                  tg.ready();
+                  tg.expand();
+                  tg.setBackgroundColor('#0a0a0a');
+                  
+                  if (tg.initDataUnsafe?.user) {
+                    userId = tg.initDataUnsafe.user.id;
+                    userName = tg.initDataUnsafe.user.username || tg.initDataUnsafe.user.first_name || 'User';
+                  }
+                }
+                
+                await loadData(userId, userName);
+                
+                // Auto refresh live transactions every 3 seconds
+                const interval = setInterval(() => loadLiveTransactions(), 3000);
+                return () => clearInterval(interval);
+                
+              } catch (err) {
+                console.error('Init error:', err);
+                setLoading(false);
+              }
+            };
+
+            init();
+          }, []);
+
+          const loadData = async (userId, userName) => {
+            try {
+              const userRes = await axios.get(`${API_BASE_URL}/user/${userId}`);
+              if (userRes.data.success) {
+                const data = userRes.data.data;
+                data.display_name = userName;
+                setUserData(data);
+              }
+
+              await loadProjectBank();
+              await loadLiveTransactions();
+
+              setLoading(false);
+            } catch (err) {
+              console.error('Load data error:', err);
+              setLoading(false);
+            }
+          };
+
+          const loadProjectBank = async () => {
+            try {
+              const statsRes = await axios.get(`${API_BASE_URL}/admin/stats`);
+              if (statsRes.data.success) {
+                const stats = statsRes.data.data;
+                const totalInvested = stats.total_invested * USDT_TO_RUB;
+                
+                let rate = 5.0;
+                let target = 100000;
+                let progress = 0;
+                
+                if (totalInvested >= 750000) {
+                  rate = 8.6;
+                  target = 750000;
+                  progress = 100;
+                } else if (totalInvested >= 250000) {
+                  rate = 7.4;
+                  target = 750000;
+                  progress = (totalInvested / 750000) * 100;
+                } else if (totalInvested >= 100000) {
+                  rate = 6.2;
+                  target = 250000;
+                  progress = (totalInvested / 250000) * 100;
+                } else {
+                  progress = (totalInvested / 100000) * 100;
+                }
+                
+                setProjectBank({
+                  invested: totalInvested,
+                  target: target,
+                  rate: rate,
+                  progress: Math.min(progress, 100)
+                });
+              }
+            } catch (err) {
+              console.error('Load bank error:', err);
+            }
+          };
+
+          const loadLiveTransactions = async () => {
+            try {
+              const txRes = await axios.get(`${API_BASE_URL}/transactions/recent`);
+              
+              if (txRes.data.success && txRes.data.data) {
+                const transactions = txRes.data.data.map(tx => ({
+                  id: tx.id,
+                  type: 'Пополнение баланса',
+                  amount: (tx.amount * USDT_TO_RUB).toFixed(2),
+                  date: new Date(tx.created_at).toLocaleString('ru-RU', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })
+                }));
+                setLiveTransactions(transactions.slice(0, 10));
+              }
+            } catch (err) {
+              console.error('Load transactions error:', err);
+            }
+          };
+
+          const handleRefresh = async () => {
+            if (refreshing) return;
+            setRefreshing(true);
+            
+            try {
+              if (userData) {
+                await loadData(userData.user_id, userData.display_name);
+              }
+            } catch (err) {
+              console.error('Refresh error:', err);
+            } finally {
+              setTimeout(() => setRefreshing(false), 1000);
+            }
+          };
+
+          const collectProfit = async () => {
+            if (!userData || userData.current_profit <= 0) {
+              alert('Нет доступной прибыли');
+              return;
+            }
+
+            try {
+              const res = await axios.post(`${API_BASE_URL}/user/${userData.user_id}/collect-profit`);
+              if (res.data.success) {
+                await loadData(userData.user_id, userData.display_name);
+                alert(`🎉 Собрано ${formatMoney(res.data.amount * USDT_TO_RUB)}!`);
+              }
+            } catch (err) {
+              alert('Ошибка сбора прибыли');
+            }
+          };
+
+          const formatMoney = (amount) => {
+            return new Intl.NumberFormat('ru-RU', {
+              style: 'decimal',
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 2
+            }).format(amount) + 'Р';
+          };
+
+          const calculateProfit = (amount) => {
+            return amount * (projectBank.rate / 100);
+          };
+
+          if (loading) {
+            return React.createElement('div', { className: 'loading' },
+              React.createElement('div', { style: { fontSize: '4rem' } }, '🚀'),
+              React.createElement('div', { className: 'spinner' }),
+              React.createElement('div', { style: { color: '#94a3b8' } }, 'Загрузка...')
+            );
+          }
+
+          const userName = userData?.display_name || 'User';
+          const userInitial = userName.charAt(0).toUpperCase();
+
+          const FooterInfo = () => React.createElement('div', { className: 'footer-info' },
+            React.createElement('div', { className: 'footer-title' }, 'Информация'),
+            React.createElement('div', { className: 'footer-links' },
+              React.createElement('a', { href: 'https://t.me/support_ton_stocker', className: 'footer-link', target: '_blank' }, '🎧 Поддержка'),
+              React.createElement('a', { href: 'https://t.me/ton_stocker_channel', className: 'footer-link', target: '_blank' }, '✈️ Канал'),
+              React.createElement('a', { href: 'https://t.me/ton_stocker_chat', className: 'footer-link', target: '_blank' }, '💬 Чат')
+            ),
+            React.createElement('div', { className: 'footer-partner' }, 'Партнерская программа'),
+            React.createElement('div', { className: 'crypto-icons' },
+              React.createElement('div', { className: 'crypto-icon bitcoin' }, '₿'),
+              React.createElement('div', { className: 'crypto-icon tether' }, '₮'),
+              React.createElement('div', { className: 'crypto-icon ton' }, '💎'),
+              React.createElement('div', { className: 'crypto-icon ethereum' }, 'Ξ')
+            ),
+            React.createElement('div', { className: 'footer-copyright' }, '© 2025 | Все права защищены.')
+          );
+
+          return React.createElement('div', { className: 'app' },
+            
+            // Header - ПОМЕНЯЛ МЕСТАМИ
+            React.createElement('header', { className: 'header' },
+              React.createElement('div', { className: 'user-info' },
+                React.createElement('div', { className: 'user-avatar' }, userInitial),
+                React.createElement('div', { className: 'user-name' }, userName)
+              ),
+              React.createElement('button', { 
+                className: 'refresh-btn',
+                onClick: handleRefresh,
+                disabled: refreshing
+              }, refreshing ? '⏳' : '🔄')
+            ),
+
+            // Content
+            React.createElement('div', { className: 'content' },
+              
+              // Main Screen
+              React.createElement('div', { className: `screen ${activeScreen === 'main' ? 'active' : ''}` },
+                // Balance Section - КРАСИВЫЕ БЛОКИ
+                // В коде React - секция баланса
+                React.createElement('div', { className: 'balance-section' },
+                  React.createElement('div', { className: 'balance-grid' },
+                    React.createElement('div', { className: 'balance-card balance-large' },
+                      React.createElement('div', { className: 'balance-label' }, 'Всего активов (RUB)'),
+                      React.createElement('div', { className: 'balance-amount' },
+                        formatMoney((userData?.balance || 0) * USDT_TO_RUB).replace('Р', '')
+                      ),
+                      React.createElement('button', { 
+                        className: 'btn-deposit',
+                        onClick: () => alert('Функция пополнения в разработке')
+                      }, '💰 Пополнить')
+                    ),
+                    React.createElement('div', { className: 'balance-card' },
+                      React.createElement('div', { className: 'balance-label' }, 'Прибыль'),
+                      React.createElement('div', { className: 'balance-amount' },
+                        formatMoney((userData?.current_profit || 0) * USDT_TO_RUB).replace('Р', '')
+                      )
+                    ),
+                    React.createElement('div', { className: 'balance-card' },
+                      React.createElement('div', { className: 'balance-label' }, 'Инвестировано'),
+                      React.createElement('div', { className: 'balance-amount' },
+                        formatMoney((userData?.total_invested || 0) * USDT_TO_RUB).replace('Р', '')
+                      )
+                    )
+                  )
+                ),
+                
+                // Bank Progress
+                React.createElement('div', { className: 'bank-section' },
+                  React.createElement('div', { className: 'bank-card' },
+                    React.createElement('div', { className: 'bank-header' },
+                      React.createElement('div', { className: 'bank-title' }, '🏦 Банк проекта'),
+                      React.createElement('div', { className: 'bank-rate' }, `${projectBank.rate}% в день`)
+                    ),
+                    React.createElement('div', { className: 'progress-bar' },
+                      React.createElement('div', { 
+                        className: 'progress-fill',
+                        style: { width: `${projectBank.progress}%` }
+                      })
+                    ),
+                    React.createElement('div', { className: 'bank-stats' },
+                      React.createElement('span', null, 
+                        'Инвестировано: ',
+                        React.createElement('strong', null, formatMoney(projectBank.invested))
+                      ),
+                      React.createElement('span', null, 
+                        'Цель: ',
+                        React.createElement('strong', null, formatMoney(projectBank.target))
+                      )
+                    )
+                  )
+                ),
+                
+                // Live Transactions
+                React.createElement('div', { className: 'transactions-section' },
+                  React.createElement('div', { className: 'section-header' },
+                    React.createElement('div', { className: 'live-indicator' }),
+                    'Live Транзакции'
+                  ),
+                  liveTransactions.map(tx =>
+                    React.createElement('div', { key: tx.id, className: 'transaction-item' },
+                      React.createElement('div', { className: 'transaction-left' },
+                        React.createElement('div', { className: 'transaction-id' }, `ID:${tx.id}`),
+                        React.createElement('div', { className: 'transaction-type' }, tx.type)
+                      ),
+                      React.createElement('div', { className: 'transaction-right' },
+                        React.createElement('div', { className: 'transaction-date' }, tx.date),
+                        React.createElement('div', { className: 'transaction-amount' }, `+${tx.amount}Р`)
+                      )
+                    )
+                  )
+                ),
+                
+                React.createElement(FooterInfo)
+              ),
+
+              // Portfolio Screen
+              React.createElement('div', { className: `screen ${activeScreen === 'portfolio' ? 'active' : ''}` },
+                React.createElement('div', { className: 'portfolio-stats' },
+                  React.createElement('div', { className: 'stat-card' },
+                    React.createElement('div', { className: 'stat-label' }, 'Ваш депозит'),
+                    React.createElement('div', { className: 'stat-value' },
+                      formatMoney((userData?.total_invested || 0) * USDT_TO_RUB)
+                    )
+                  ),
+                  React.createElement('div', { className: 'stat-card' },
+                    React.createElement('div', { className: 'stat-label' }, 'Доходность'),
+                    React.createElement('div', { className: 'stat-value' }, `${projectBank.rate}%`)
+                  )
+                ),
+                
+                React.createElement('div', { className: 'collect-section' },
+                  React.createElement('div', { className: 'collect-card' },
+                    React.createElement('div', { className: 'stat-label' }, 'Накоплено'),
+                    React.createElement('div', { className: 'collect-amount' },
+                      formatMoney((userData?.current_profit || 0) * USDT_TO_RUB)
+                    ),
+                    React.createElement('button', {
+                      className: 'collect-btn',
+                      onClick: collectProfit,
+                      disabled: (userData?.current_profit || 0) <= 0
+                    }, '💎 Собрать прибыль')
+                  )
+                ),
+                
+                React.createElement(FooterInfo)
+              ),
+
+              // Card Screen
+              React.createElement('div', { className: `screen ${activeScreen === 'card' ? 'active' : ''}` },
+                React.createElement('div', { className: 'card-display' },
+                  React.createElement('div', { className: 'card-balance' },
+                    formatMoney((userData?.balance || 0) * USDT_TO_RUB)
+                  ),
+                  React.createElement('div', { style: { opacity: 0.8 } }, 'Ваш баланс')
+                ),
+                
+                React.createElement('div', { style: { display: 'flex', gap: '1rem', padding: '0 1.5rem', marginBottom: '1rem' } },
+                  React.createElement('button', { className: 'btn btn-primary', style: { flex: 1 } }, '💳 Пополнить'),
+                  React.createElement('button', { className: 'btn btn-primary', style: { flex: 1, background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)' } }, '💸 Вывести')
+                ),
+                
+                React.createElement('div', { className: 'calculator-section' },
+                  React.createElement('div', { className: 'calculator-card' },
+                    React.createElement('div', { className: 'calc-title' }, '🧮 Калькулятор прибыли'),
+                    React.createElement('input', {
+                      type: 'number',
+                      placeholder: 'Введите сумму в рублях',
+                      className: 'calc-input',
+                      value: calcAmount,
+                      onChange: (e) => setCalcAmount(e.target.value)
+                    }),
+                    calcAmount && React.createElement('div', { className: 'calc-result' },
+                      `Дневная прибыль: ${formatMoney(calculateProfit(parseFloat(calcAmount) || 0))}`
+                    )
+                  )
+                ),
+                
+                React.createElement(FooterInfo)
+              ),
+
+              // About Screen
+              React.createElement('div', { className: `screen ${activeScreen === 'about' ? 'active' : ''}` },
+                React.createElement('div', { className: 'info-section' },
+                  React.createElement('div', { className: 'info-card' },
+                    React.createElement('div', { style: { textAlign: 'center', fontSize: '4rem', marginBottom: '1rem' } }, '💎'),
+                    React.createElement('div', { className: 'info-title' }, 'TON STOCKER'),
+                    React.createElement('div', { className: 'info-text' },
+                      'Современная инвестиционная платформа с AI-технологиями для максимальной доходности. Приумножайте ваши средства с гарантированной безопасностью.'
+                    )
+                  ),
+                  
+                  React.createElement('div', { className: 'info-card' },
+                    React.createElement('div', { className: 'info-title' }, '🚀 Преимущества'),
+                    React.createElement('div', { className: 'feature-list' },
+                      React.createElement('div', { className: 'feature-item' },
+                        React.createElement('div', { className: 'feature-icon' }, '📈'),
+                        React.createElement('div', { className: 'feature-content' },
+                          React.createElement('h4', null, 'Высокая доходность'),
+                          React.createElement('p', null, 'До 8.6% в день')
+                        )
+                      ),
+                      React.createElement('div', { className: 'feature-item' },
+                        React.createElement('div', { className: 'feature-icon' }, '🔒'),
+                        React.createElement('div', { className: 'feature-content' },
+                          React.createElement('h4', null, 'Безопасность'),
+                          React.createElement('p', null, 'Защита инвестиций')
+                        )
+                      ),
+                      React.createElement('div', { className: 'feature-item' },
+                        React.createElement('div', { className: 'feature-icon' }, '⚡'),
+                        React.createElement('div', { className: 'feature-content' },
+                          React.createElement('h4', null, 'Быстрые выплаты'),
+                          React.createElement('p', null, 'Ежедневно')
+                        )
+                      ),
+                      React.createElement('div', { className: 'feature-item' },
+                        React.createElement('div', { className: 'feature-icon' }, '🏆'),
+                        React.createElement('div', { className: 'feature-content' },
+                          React.createElement('h4', null, 'Партнерская программа'),
+                          React.createElement('p', null, '3 уровня до 21%')
+                        )
+                      )
+                    )
+                  )
+                ),
+                
+                React.createElement(FooterInfo)
+              ),
+
+              // Partners Screen
+              React.createElement('div', { className: `screen ${activeScreen === 'partners' ? 'active' : ''}` },
+                React.createElement('div', { className: 'info-section' },
+                  React.createElement('div', { className: 'info-card' },
+                    React.createElement('div', { className: 'info-title' }, '🏆 Партнерская программа'),
+                    React.createElement('div', { className: 'info-text' },
+                      'Чем больше людей приглашаете, тем больше зарабатываете! Получите до 21% с депозитов рефералов.'
+                    )
+                  ),
+                  
+                  React.createElement('div', { className: 'partner-stats' },
+                    React.createElement('div', { className: 'partner-stat-card' },
+                      React.createElement('div', { className: 'partner-value' },
+                        formatMoney((userData?.referral_earnings || 0) * USDT_TO_RUB)
+                      ),
+                      React.createElement('div', { className: 'partner-label' }, 'Заработано')
+                    ),
+                    React.createElement('div', { className: 'partner-stat-card' },
+                      React.createElement('div', { className: 'partner-value' },
+                        userData?.referrals?.total || 0
+                      ),
+                      React.createElement('div', { className: 'partner-label' }, 'Рефералов')
+                    )
+                  ),
+                  
+                  React.createElement('div', { className: 'info-card' },
+                    React.createElement('div', { className: 'info-title' }, '🎯 3-уровневая система'),
+                    React.createElement('div', { className: 'level-list' },
+                      React.createElement('div', { className: 'level-item' },
+                        React.createElement('div', null,
+                          React.createElement('div', { className: 'level-name' }, '🥇 1 уровень'),
+                          React.createElement('div', { className: 'level-desc' }, 'Прямые приглашения')
+                        ),
+                        React.createElement('div', { className: 'level-rate' }, '15%')
+                      ),
+                      React.createElement('div', { className: 'level-item' },
+                        React.createElement('div', null,
+                          React.createElement('div', { className: 'level-name' }, '🥈 2 уровень'),
+                          React.createElement('div', { className: 'level-desc' }, 'Рефералы рефералов')
+                        ),
+                        React.createElement('div', { className: 'level-rate' }, '5%')
+                      ),
+                      React.createElement('div', { className: 'level-item' },
+                        React.createElement('div', null,
+                          React.createElement('div', { className: 'level-name' }, '🥉 3 уровень'),
+                          React.createElement('div', { className: 'level-desc' }, '3-го уровня')
+                        ),
+                        React.createElement('div', { className: 'level-rate' }, '1%')
+                      )
+                    )
+                  ),
+                  
+                  React.createElement('div', { className: 'info-card' },
+                    React.createElement('div', { className: 'ref-link-section' },
+                      React.createElement('div', { className: 'info-title' }, '🔗 Ваша ссылка'),
+                      React.createElement('div', { className: 'ref-code' },
+                        `https://t.me/your_bot?start=${userData?.referral_code || 'LOADING'}`
+                      ),
+                      React.createElement('button', {
+                        className: 'copy-link-btn',
+                        onClick: () => {
+                          const link = `https://t.me/your_bot?start=${userData?.referral_code}`;
+                          if (navigator.clipboard) {
+                            navigator.clipboard.writeText(link);
+                            alert('📋 Ссылка скопирована!');
+                          }
+                        }
+                      }, '📋 Скопировать ссылку')
+                    )
+                  )
+                ),
+                
+                React.createElement(FooterInfo)
+              )
+            ),
+
+            // Bottom Navigation - КАК НА СКРИНШОТЕ
+            React.createElement('nav', { className: 'bottom-nav' },
+              React.createElement('div', {
+                className: `nav-item ${activeScreen === 'main' ? 'active' : ''}`,
+                onClick: () => setActiveScreen('main')
+              },
+                React.createElement('div', { className: 'nav-icon' }, '🏠'),
+                React.createElement('div', { className: 'nav-label' }, 'Главная')
+              ),
+              
+              React.createElement('div', {
+                className: `nav-item ${activeScreen === 'portfolio' ? 'active' : ''}`,
+                onClick: () => setActiveScreen('portfolio')
+              },
+                React.createElement('div', { className: 'nav-icon' }, '✓'),
+                React.createElement('div', { className: 'nav-label' }, 'Портфель')
+              ),
+              
+              React.createElement('div', {
+                className: `nav-item center ${activeScreen === 'card' ? 'active' : ''}`,
+                onClick: () => setActiveScreen('card')
+              },
+                React.createElement('div', { className: 'nav-icon' }, '💳')
+              ),
+              
+              React.createElement('div', {
+                className: `nav-item ${activeScreen === 'about' ? 'active' : ''}`,
+                onClick: () => setActiveScreen('about')
+              },
+                React.createElement('div', { className: 'nav-icon' }, '💬'),
+                React.createElement('div', { className: 'nav-label' }, 'О проекте')
+              ),
+              
+              React.createElement('div', {
+                className: `nav-item ${activeScreen === 'partners' ? 'active' : ''}`,
+                onClick: () => setActiveScreen('partners')
+              },
+                React.createElement('div', { className: 'nav-icon' }, '👤'),
+                React.createElement('div', { className: 'nav-label' }, 'Партнёры')
+              )
+            )
+          );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(React.createElement(App));
+    </script>
+</body>
+</html>
+
+
