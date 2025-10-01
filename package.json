@@ -1,0 +1,33 @@
+{
+  "name": "ton-stocker-webapp",
+  "version": "3.0.0",
+  "description": "TON STOCKER AI Investment Platform - Telegram Mini App",
+  "homepage": "https://onlylosee.github.io/webapp",
+  "main": "index.html",
+  "scripts": {
+    "predeploy": "echo 'Preparing deployment...'",
+    "deploy": "gh-pages -d .",
+    "serve": "python -m http.server 8080",
+    "build": "echo 'Static files ready for deployment'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ваш-username/ton-stocker-webapp.git"
+  },
+  "keywords": [
+    "telegram",
+    "mini-app",
+    "investment",
+    "crypto",
+    "ton",
+    "react"
+  ],
+  "author": "TON STOCKER",
+  "license": "MIT",
+  "devDependencies": {
+    "gh-pages": "^6.1.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
