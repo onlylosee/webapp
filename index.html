@@ -1198,6 +1198,7 @@
               // Main Screen
               React.createElement('div', { className: `screen ${activeScreen === 'main' ? 'active' : ''}` },
                 // Balance Section - КРАСИВЫЕ БЛОКИ
+                // В коде React - секция баланса
                 React.createElement('div', { className: 'balance-section' },
                   React.createElement('div', { className: 'balance-grid' },
                     React.createElement('div', { className: 'balance-card balance-large' },
@@ -1205,7 +1206,10 @@
                       React.createElement('div', { className: 'balance-amount' },
                         formatMoney((userData?.balance || 0) * USDT_TO_RUB).replace('Р', '')
                       ),
-                      React.createElement('button', { className: 'btn btn-primary' }, 'Пополнить')
+                      React.createElement('button', { 
+                        className: 'btn-deposit',
+                        onClick: () => alert('Функция пополнения в разработке')
+                      }, '💰 Пополнить')
                     ),
                     React.createElement('div', { className: 'balance-card' },
                       React.createElement('div', { className: 'balance-label' }, 'Прибыль'),
@@ -1510,4 +1514,5 @@
     </script>
 </body>
 </html>
+
 
