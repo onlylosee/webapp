@@ -407,79 +407,193 @@
         }
 
         /* Bottom Navigation - КАК НА СКРИНШОТЕ */
+        /* Bottom Navigation - ИСПРАВЛЕНО */
         .bottom-nav {
           position: fixed;
           bottom: 0;
-          left: 0;
-          right: 0;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 100%;
           max-width: 500px;
-          margin: 0 auto;
           background: #1a1a1a;
           border-top: 1px solid rgba(59, 130, 246, 0.2);
           display: flex;
           justify-content: space-around;
           align-items: flex-end;
-          padding: 0.5rem 0 0.75rem;
+          padding: 0.5rem 0.5rem env(safe-area-inset-bottom, 0.75rem);
           z-index: 1000;
-          height: 60px;
+          height: 65px;
         }
-
+        
         .nav-item {
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 0.25rem;
-          padding: 0.25rem 0.75rem;
+          justify-content: center;
+          gap: 0.2rem;
+          padding: 0.25rem 0.5rem;
           cursor: pointer;
           transition: all 0.2s;
           flex: 1;
           max-width: 70px;
+          height: 50px;
         }
-
+        
         .nav-item.center {
-          transform: translateY(-15px);
+          transform: translateY(-20px);
           background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
           border-radius: 50%;
-          padding: 1rem;
-          width: 60px;
-          height: 60px;
-          box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
+          padding: 0.75rem;
+          width: 56px;
+          height: 56px;
+          box-shadow: 0 4px 20px rgba(59, 130, 246, 0.5);
+          justify-content: center;
+          align-items: center;
         }
-
+        
         .nav-icon {
           font-size: 1.3rem;
           color: #ffffff;
           transition: all 0.2s;
+          line-height: 1;
         }
-
+        
         .nav-item:not(.active):not(.center) .nav-icon {
           color: #64748b;
         }
-
+        
         .nav-item.active:not(.center) .nav-icon {
           color: #3b82f6;
         }
-
+        
         .nav-item.center .nav-icon {
           font-size: 1.8rem;
           color: #ffffff;
         }
-
+        
         .nav-label {
-          font-size: 0.7rem;
+          font-size: 0.65rem;
           color: #64748b;
           font-weight: 500;
           transition: all 0.2s;
+          line-height: 1;
         }
-
+        
         .nav-item.active .nav-label {
           color: #3b82f6;
         }
-
+        
         .nav-item.center .nav-label {
           display: none;
         }
-
+        
+        /* Balance Section - ЯРКАЯ КНОПКА */
+        .balance-section {
+          padding: 1.5rem;
+          padding-bottom: 0;
+        }
+        
+        .balance-grid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 1rem;
+          margin-bottom: 1rem;
+        }
+        
+        .balance-card {
+          background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+          border: 1px solid rgba(59, 130, 246, 0.3);
+          border-radius: 16px;
+          padding: 1.5rem;
+          text-align: center;
+          transition: all 0.2s;
+        }
+        
+        .balance-card:hover {
+          border-color: rgba(59, 130, 246, 0.5);
+          transform: translateY(-2px);
+          box-shadow: 0 8px 25px rgba(59, 130, 246, 0.2);
+        }
+        
+        .balance-label {
+          color: #94a3b8;
+          font-size: 0.85rem;
+          margin-bottom: 0.75rem;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          font-weight: 500;
+        }
+        
+        .balance-amount {
+          font-size: 2rem;
+          font-weight: 700;
+          color: #3b82f6;
+          line-height: 1;
+        }
+        
+        .balance-large {
+          grid-column: 1 / -1;
+          background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+          border: none;
+        }
+        
+        .balance-large .balance-label {
+          color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .balance-large .balance-amount {
+          font-size: 2.5rem;
+          color: #ffffff;
+          margin-bottom: 1rem;
+        }
+        
+        /* ЯРКАЯ КНОПКА ПОПОЛНИТЬ */
+        .btn-deposit {
+          width: 100%;
+          padding: 1rem;
+          border-radius: 12px;
+          border: none;
+          font-weight: 700;
+          cursor: pointer;
+          transition: all 0.2s;
+          font-size: 1.1rem;
+          background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+          color: #ffffff;
+          box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+        
+        .btn-deposit:active {
+          transform: scale(0.95);
+          box-shadow: 0 2px 8px rgba(34, 197, 94, 0.4);
+        }
+        
+        .btn-deposit:hover {
+          background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+          box-shadow: 0 6px 20px rgba(34, 197, 94, 0.5);
+        }
+        
+        /* Padding для контента чтобы не закрывался навигацией */
+        body {
+          padding-bottom: 80px;
+        }
+        
+        .content {
+          min-height: calc(100vh - 140px);
+          padding-bottom: 2rem;
+        }
+        
+        /* Для iOS safe area */
+        @supports (padding: max(0px)) {
+          .bottom-nav {
+            padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+          }
+          
+          body {
+            padding-bottom: max(80px, calc(80px + env(safe-area-inset-bottom)));
+          }
+        }
         /* Footer Info - ИСПРАВЛЕНО */
         .footer-info {
           padding: 2rem 1.5rem 1.5rem;
@@ -1396,3 +1510,4 @@
     </script>
 </body>
 </html>
+
