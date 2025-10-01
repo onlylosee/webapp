@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <meta name="theme-color" content="#1a1a1a" />
+    <meta name="theme-color" content="#3f51b5" />
     <title>TON STOCKER - Investment Platform</title>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -13,1064 +13,1004 @@
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     
     <style>
-        /* TON STOCKER v3 - Modern Design with Bottom Navigation */
+        /* TON STOCKER v3 - Ваш стиль */
         :root {
-      --primary: #3f51b5;
-      --primary-light: #5c6bc0;
-      --primary-dark: #1a237e;
-      --secondary: #00bcd4;
-      --success: #4caf50;
-      --success-light: #81c784;
-      --warning: #ff9800;
-      --error: #f44336;
-      --info: #2196f3;
-
-      --bg-primary: #0a0a0a;
-      --bg-secondary: #1a1a1a;
-      --bg-card: #1e1e1e;
-      --bg-elevated: #2a2a2a;
-
-      --text-primary: #ffffff;
-      --text-secondary: #b0b0b0;
-      --text-muted: #666666;
-
-      --border: #333333;
-      --border-light: #404040;
-
-      --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
-      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
-      --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
-
-      --radius-sm: 8px;
-      --radius-md: 12px;
-      --radius-lg: 16px;
-      --radius-xl: 24px;
-
-      --gradient-primary: linear-gradient(135deg, var(--primary), var(--primary-dark));
-      --gradient-success: linear-gradient(135deg, var(--success), #388e3c);
-      --gradient-card: linear-gradient(135deg, var(--bg-card), var(--bg-elevated));
-
-      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      --transition-fast: all 0.15s ease-out;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
-      background: var(--bg-primary);
-      color: var(--text-primary);
-      line-height: 1.6;
-      overflow-x: hidden;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      scroll-behavior: smooth;
-    }
-
-    .app {
-      max-width: 500px;
-      margin: 0 auto;
-      min-height: 100vh;
-      background: var(--bg-primary);
-      position: relative;
-      overflow-x: hidden;
-    }
-
-    /* === LOADING SCREEN === */
-    .loading-container {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      background: var(--bg-primary);
-    }
-
-    .loading-content {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2rem;
-      text-align: center;
-      animation: fadeIn 0.6s ease-out;
-    }
-
-    .loading-logo {
-      font-size: 4rem;
-      animation: bounce 1s ease-in-out infinite;
-    }
-
-    .loading-spinner {
-      width: 50px;
-      height: 50px;
-      border: 4px solid var(--border);
-      border-top: 4px solid var(--primary);
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-
-    .loading-content h2 {
-      font-size: 2rem;
-      font-weight: 700;
-      background: var(--gradient-primary);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .loading-content p {
-      color: var(--text-secondary);
-      font-size: 1rem;
-    }
-
-    /* === ERROR SCREEN === */
-    .error-container {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: 2rem;
-    }
-
-    .error-content {
-      text-align: center;
-      max-width: 400px;
-    }
-
-    .error-icon {
-      font-size: 4rem;
-      margin-bottom: 1.5rem;
-      animation: shake 0.5s ease-in-out;
-    }
-
-    .error-content h2 {
-      margin-bottom: 1rem;
-      color: var(--error);
-      font-size: 1.5rem;
-    }
-
-    .error-message {
-      color: var(--text-secondary);
-      margin-bottom: 2rem;
-      padding: 1rem;
-      background: var(--bg-card);
-      border-radius: var(--radius-md);
-      border-left: 4px solid var(--error);
-    }
-
-    .retry-button {
-      background: var(--gradient-primary);
-      color: white;
-      border: none;
-      padding: 1rem 2rem;
-      border-radius: var(--radius-md);
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: var(--transition);
-      box-shadow: var(--shadow-md);
-    }
-
-    .retry-button:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-lg);
-    }
-
-    /* === NOTIFICATIONS === */
-    .notification {
-      position: fixed;
-      top: 1rem;
-      left: 50%;
-      transform: translateX(-50%);
-      max-width: 90%;
-      padding: 1rem 1.5rem;
-      border-radius: var(--radius-md);
-      box-shadow: var(--shadow-lg);
-      backdrop-filter: blur(10px);
-      font-weight: 500;
-      z-index: 9999;
-      animation: slideInDown 0.3s ease-out;
-    }
-
-    .notification.success {
-      background: rgba(76, 175, 80, 0.95);
-      border-left: 4px solid var(--success);
-    }
-
-    .notification.error {
-      background: rgba(244, 67, 54, 0.95);
-      border-left: 4px solid var(--error);
-    }
-
-    .notification.info {
-      background: rgba(33, 150, 243, 0.95);
-      border-left: 4px solid var(--info);
-    }
-
-    .notification-content {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    /* === HEADER === */
-    .app-header {
-      background: var(--gradient-primary);
-      padding: 1.5rem;
-      box-shadow: var(--shadow-lg);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      backdrop-filter: blur(10px);
-    }
-
-    .header-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1.5rem;
-    }
-
-    .app-title {
-      font-size: 1.75rem;
-      font-weight: 700;
-      color: white;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-      line-height: 1;
-    }
-
-    .app-subtitle {
-      font-size: 0.8rem;
-      color: rgba(255, 255, 255, 0.8);
-      font-weight: 400;
-      margin-top: 0.25rem;
-    }
-
-    .refresh-btn {
-      background: rgba(255, 255, 255, 0.2);
-      border: none;
-      color: white;
-      padding: 0.75rem;
-      border-radius: 50%;
-      cursor: pointer;
-      transition: var(--transition);
-      font-size: 1.2rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      backdrop-filter: blur(10px);
-    }
-
-    .refresh-btn:hover:not(:disabled) {
-      background: rgba(255, 255, 255, 0.3);
-      transform: rotate(180deg);
-    }
-
-    .refresh-btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    /* === BALANCE CARD === */
-    .balance-card {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(20px);
-      padding: 1.5rem;
-      border-radius: var(--radius-lg);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .balance-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-      animation: shimmer 3s infinite;
-    }
-
-    .balance-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1rem;
-      color: rgba(255, 255, 255, 0.9);
-      font-size: 0.9rem;
-    }
-
-    .balance-toggle {
-      background: rgba(255, 255, 255, 0.2);
-      border: none;
-      color: white;
-      padding: 0.5rem;
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      transition: var(--transition-fast);
-      font-size: 1rem;
-    }
-
-    .balance-toggle:hover {
-      background: rgba(255, 255, 255, 0.3);
-    }
-
-    .balance-amount {
-      font-size: 3rem;
-      font-weight: 700;
-      color: white;
-      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-      line-height: 1;
-      margin-bottom: 0.5rem;
-    }
-
-    .profit-indicator {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: rgba(76, 175, 80, 0.2);
-      padding: 0.75rem 1rem;
-      border-radius: var(--radius-md);
-      border: 1px solid rgba(76, 175, 80, 0.3);
-      color: var(--success-light);
-      font-size: 0.9rem;
-      font-weight: 500;
-      animation: pulse 2s ease-in-out infinite;
-    }
-
-    .profit-icon {
-      font-size: 1.2rem;
-      animation: bounce 1s ease-in-out infinite;
-    }
-
-    /* === QUICK ACTIONS === */
-    .quick-actions {
-      display: flex;
-      gap: 1rem;
-      padding: 1.5rem;
-      margin-bottom: 1rem;
-    }
-
-    .action-btn {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      padding: 1.5rem;
-      border: none;
-      border-radius: var(--radius-lg);
-      cursor: pointer;
-      transition: var(--transition);
-      position: relative;
-      overflow: hidden;
-      text-align: left;
-      box-shadow: var(--shadow-md);
-    }
-
-    .action-btn::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 0;
-      height: 0;
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      transition: all 0.6s ease;
-    }
-
-    .action-btn:active::before {
-      width: 300px;
-      height: 300px;
-    }
-
-    .collect-btn {
-      background: var(--gradient-success);
-      color: white;
-    }
-
-    .collect-btn.disabled {
-      background: var(--bg-elevated);
-      color: var(--text-muted);
-      cursor: not-allowed;
-      opacity: 0.6;
-    }
-
-    .invest-btn {
-      background: var(--gradient-primary);
-      color: white;
-    }
-
-    .action-btn:hover:not(.disabled) {
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-lg);
-    }
-
-    .btn-icon {
-      font-size: 2rem;
-      flex-shrink: 0;
-    }
-
-    .btn-content {
-      display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
-    }
-
-    .btn-title {
-      font-size: 1rem;
-      font-weight: 600;
-      line-height: 1.2;
-    }
-
-    .btn-amount, .btn-subtitle {
-      font-size: 0.9rem;
-      opacity: 0.9;
-      font-weight: 500;
-    }
-
-    /* === SECTIONS === */
-    section {
-      margin-bottom: 2rem;
-    }
-
-    .section-title {
-      font-size: 1.2rem;
-      font-weight: 700;
-      color: var(--text-primary);
-      margin-bottom: 1rem;
-      padding: 0 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    /* === STATS GRID === */
-    .stats-section {
-      padding: 0 1.5rem;
-    }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1rem;
-    }
-
-    .stat-card {
-      background: var(--gradient-card);
-      padding: 1.5rem;
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      transition: var(--transition);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .stat-card::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
-      transform: scale(0);
-      transition: transform 0.6s ease;
-    }
-
-    .stat-card:hover::before {
-      transform: scale(1);
-    }
-
-    .stat-card:hover {
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-lg);
-      border-color: var(--primary-light);
-    }
-
-    .stat-icon {
-      width: 50px;
-      height: 50px;
-      border-radius: var(--radius-md);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      flex-shrink: 0;
-      position: relative;
-      z-index: 1;
-    }
-
-    .stat-icon.invested {
-      background: rgba(33, 150, 243, 0.2);
-      color: var(--info);
-    }
-
-    .stat-icon.earned {
-      background: rgba(76, 175, 80, 0.2);
-      color: var(--success);
-    }
-
-    .stat-icon.deposits {
-      background: rgba(156, 39, 176, 0.2);
-      color: #ab47bc;
-    }
-
-    .stat-icon.referrals {
-      background: rgba(255, 152, 0, 0.2);
-      color: var(--warning);
-    }
-
-    .stat-info {
-      flex: 1;
-      z-index: 1;
-      position: relative;
-    }
-
-    .stat-label {
-      display: block;
-      font-size: 0.85rem;
-      color: var(--text-secondary);
-      margin-bottom: 0.5rem;
-      font-weight: 500;
-    }
-
-    .stat-value {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: var(--text-primary);
-      line-height: 1.2;
-    }
-
-    /* === PERFORMANCE SECTION === */
-    .performance-section {
-      padding: 0 1.5rem;
-    }
-
-    .performance-card {
-      background: var(--gradient-card);
-      padding: 1.5rem;
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow-md);
-    }
-
-    .card-title {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: var(--text-primary);
-      margin-bottom: 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .performance-stats {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    .perf-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem 0;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .perf-item:last-child {
-      border-bottom: none;
-    }
-
-    .perf-label {
-      color: var(--text-secondary);
-      font-size: 0.9rem;
-    }
-
-    .perf-value {
-      font-weight: 600;
-      color: var(--text-primary);
-    }
-
-    .perf-value.positive {
-      color: var(--success);
-    }
-
-    .perf-value.status {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--success);
-      animation: pulse 2s ease-in-out infinite;
-    }
-
-    .perf-value.status.active {
-      color: var(--success);
-    }
-
-    /* === TRANSACTIONS SECTION === */
-    .transactions-section {
-      padding: 0 1.5rem;
-    }
-
-    .transactions-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-
-    .transaction-item {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      padding: 1.25rem;
-      background: var(--gradient-card);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border);
-      transition: var(--transition);
-    }
-
-    .transaction-item:hover {
-      transform: translateX(8px);
-      box-shadow: var(--shadow-md);
-      border-color: var(--primary-light);
-    }
-
-    .tx-icon {
-      width: 45px;
-      height: 45px;
-      border-radius: 50%;
-      background: var(--bg-elevated);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.2rem;
-      flex-shrink: 0;
-      border: 1px solid var(--border-light);
-    }
-
-    .tx-info {
-      flex: 1;
-    }
-
-    .tx-title {
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: 0.25rem;
-      font-size: 0.95rem;
-    }
-
-    .tx-description {
-      font-size: 0.85rem;
-      color: var(--text-secondary);
-      margin-bottom: 0.25rem;
-      line-height: 1.3;
-    }
-
-    .tx-date {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-    }
-
-    .tx-amount {
-      font-weight: 700;
-      font-size: 1rem;
-      text-align: right;
-    }
-
-    .tx-amount.positive {
-      color: var(--success);
-    }
-
-    .tx-amount.negative {
-      color: var(--error);
-    }
-
-    .empty-transactions {
-      text-align: center;
-      padding: 3rem 1rem;
-      color: var(--text-secondary);
-    }
-
-    .empty-icon {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-      opacity: 0.7;
-    }
-
-    .empty-transactions p {
-      font-size: 1.1rem;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-      color: var(--text-primary);
-    }
-
-    .empty-transactions small {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-    }
-
-    /* === REFERRAL SECTION === */
-    .referral-section {
-      padding: 0 1.5rem;
-    }
-
-    .referral-card {
-      background: var(--gradient-card);
-      padding: 1.5rem;
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow-md);
-    }
-
-    .referral-subtitle {
-      color: var(--text-secondary);
-      margin-bottom: 1.5rem;
-      font-size: 0.9rem;
-      line-height: 1.4;
-    }
-
-    .referral-stats {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 1.5rem;
-      background: var(--bg-elevated);
-      padding: 1rem;
-      border-radius: var(--radius-md);
-      border: 1px solid var(--border-light);
-    }
-
-    .ref-stat {
-      text-align: center;
-      flex: 1;
-    }
-
-    .ref-count {
-      display: block;
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--primary-light);
-      margin-bottom: 0.25rem;
-    }
-
-    .ref-label {
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-      font-weight: 500;
-    }
-
-    .referral-earnings {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem;
-      background: rgba(76, 175, 80, 0.1);
-      border-radius: var(--radius-md);
-      border: 1px solid rgba(76, 175, 80, 0.2);
-      margin-bottom: 1.5rem;
-    }
-
-    .earnings-label {
-      color: var(--text-secondary);
-      font-size: 0.9rem;
-    }
-
-    .earnings-amount {
-      font-size: 1.2rem;
-      font-weight: 700;
-      color: var(--success);
-    }
-
-    .referral-link {
-      background: var(--bg-elevated);
-      padding: 1rem;
-      border-radius: var(--radius-md);
-      border: 1px solid var(--border-light);
-    }
-
-    .link-header {
-      font-size: 0.9rem;
-      color: var(--text-secondary);
-      margin-bottom: 0.75rem;
-    }
-
-    .link-container {
-      display: flex;
-      gap: 0.5rem;
-      align-items: center;
-    }
-
-    .ref-code {
-      flex: 1;
-      background: var(--bg-primary);
-      border: 1px solid var(--border);
-      color: var(--primary-light);
-      padding: 0.75rem;
-      border-radius: var(--radius-sm);
-      font-size: 0.9rem;
-      font-weight: 600;
-      font-family: 'Monaco', 'Menlo', monospace;
-    }
-
-    .copy-btn {
-      background: var(--gradient-primary);
-      color: white;
-      border: none;
-      padding: 0.75rem 1rem;
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      font-size: 0.85rem;
-      font-weight: 600;
-      transition: var(--transition-fast);
-      white-space: nowrap;
-    }
-
-    .copy-btn:hover {
-      transform: scale(1.05);
-    }
-
-    /* === FOOTER === */
-    .app-footer {
-      margin-top: 3rem;
-      padding: 2rem 1.5rem;
-      background: var(--bg-secondary);
-      border-top: 1px solid var(--border);
-    }
-
-    .footer-content {
-      text-align: center;
-      color: var(--text-muted);
-    }
-
-    .footer-content p {
-      margin-bottom: 0.5rem;
-      font-size: 0.9rem;
-    }
-
-    .footer-links {
-      display: flex;
-      justify-content: center;
-      gap: 1rem;
-      margin-top: 1rem;
-      flex-wrap: wrap;
-    }
-
-    .footer-links span {
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-    }
-
-    /* === ANIMATIONS === */
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    @keyframes bounce {
-      0%, 20%, 53%, 80%, 100% { transform: translateY(0); }
-      40%, 43% { transform: translateY(-8px); }
-      70% { transform: translateY(-4px); }
-      90% { transform: translateY(-2px); }
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.7; }
-    }
-
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-5px); }
-      75% { transform: translateX(5px); }
-    }
-
-    @keyframes slideInDown {
-      from {
-        transform: translate(-50%, -100%);
-        opacity: 0;
-      }
-      to {
-        transform: translate(-50%, 0);
-        opacity: 1;
-      }
-    }
-
-    @keyframes slideInRight {
-      from {
-        transform: translateX(30px);
-        opacity: 0;
-      }
-      to {
-        transform: translateX(0);
-        opacity: 1;
-      }
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    @keyframes shimmer {
-      0% { left: -100%; }
-      100% { left: 100%; }
-    }
-
-    @keyframes balanceGlow {
-      0% { text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3); }
-      50% { text-shadow: 0 2px 20px rgba(63, 81, 181, 0.4); }
-      100% { text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3); }
-    }
-
-    /* === RESPONSIVE DESIGN === */
-    @media (max-width: 480px) {
-      .balance-amount {
-        font-size: 2.5rem;
-      }
-
-      .stats-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .quick-actions {
-        flex-direction: column;
-        gap: 0.75rem;
-      }
-
-      .action-btn {
-        padding: 1.25rem;
-      }
-
-      .btn-icon {
-        font-size: 1.75rem;
-      }
-
-      .app-title {
-        font-size: 1.5rem;
-      }
-
-      .referral-stats {
-        flex-direction: column;
-        gap: 1rem;
-      }
-
-      .ref-stat {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        text-align: left;
-      }
-
-      .ref-count {
-        margin-bottom: 0;
-      }
-
-      .footer-links {
-        flex-direction: column;
-        gap: 0.5rem;
-      }
-
-      section {
-        margin-bottom: 1.5rem;
-      }
-    }
-
-    @media (max-width: 360px) {
-      .app-header {
-        padding: 1rem;
-      }
-
-      .balance-card {
-        padding: 1.25rem;
-      }
-
-      .quick-actions,
-      .stats-section,
-      .performance-section,
-      .transactions-section,
-      .referral-section {
-        padding: 0 1rem;
-      }
-
-      .section-title {
-        padding: 0 1rem;
-      }
-
-      .balance-amount {
-        font-size: 2.25rem;
-      }
-
-      .link-container {
-        flex-direction: column;
-      }
-
-      .copy-btn {
-        width: 100%;
-      }
-    }
-
-    /* === DARK MODE ENHANCEMENTS === */
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --text-primary: #ffffff;
-        --text-secondary: #b0b0b0;
-        --text-muted: #666666;
-      }
-    }
-
-    /* === SMOOTH SCROLLING === */
-    html {
-      scroll-behavior: smooth;
-    }
-
-    /* === CUSTOM SCROLLBAR === */
-    ::-webkit-scrollbar {
-      width: 6px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: var(--bg-secondary);
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: var(--primary);
-      border-radius: 3px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: var(--primary-light);
-    }
-
-    /* === SELECTION === */
-    ::selection {
-      background: var(--primary-light);
-      color: white;
-    }
+          --primary: #3f51b5;
+          --primary-light: #5c6bc0;
+          --primary-dark: #1a237e;
+          --secondary: #00bcd4;
+          --success: #4caf50;
+          --success-light: #81c784;
+          --warning: #ff9800;
+          --error: #f44336;
+          --info: #2196f3;
+
+          --bg-primary: #0a0a0a;
+          --bg-secondary: #1a1a1a;
+          --bg-card: #1e1e1e;
+          --bg-elevated: #2a2a2a;
+
+          --text-primary: #ffffff;
+          --text-secondary: #b0b0b0;
+          --text-muted: #666666;
+
+          --border: #333333;
+          --border-light: #404040;
+
+          --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+          --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+          --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+
+          --radius-sm: 8px;
+          --radius-md: 12px;
+          --radius-lg: 16px;
+          --radius-xl: 24px;
+
+          --gradient-primary: linear-gradient(135deg, var(--primary), var(--primary-dark));
+          --gradient-success: linear-gradient(135deg, var(--success), #388e3c);
+          --gradient-card: linear-gradient(135deg, var(--bg-card), var(--bg-elevated));
+
+          --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          --transition-fast: all 0.15s ease-out;
+        }
+
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+
+        body {
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+          background: var(--bg-primary);
+          color: var(--text-primary);
+          line-height: 1.6;
+          overflow-x: hidden;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+          scroll-behavior: smooth;
+          padding-bottom: 80px; /* Space for bottom nav */
+        }
+
+        .app {
+          max-width: 500px;
+          margin: 0 auto;
+          min-height: 100vh;
+          background: var(--bg-primary);
+          position: relative;
+          overflow-x: hidden;
+        }
+
+        /* Loading */
+        .loading-container {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          min-height: 100vh;
+          background: var(--bg-primary);
+        }
+
+        .loading-content {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 2rem;
+          text-align: center;
+          animation: fadeIn 0.6s ease-out;
+        }
+
+        .loading-logo {
+          font-size: 4rem;
+          animation: bounce 1s ease-in-out infinite;
+        }
+
+        .loading-spinner {
+          width: 50px;
+          height: 50px;
+          border: 4px solid var(--border);
+          border-top: 4px solid var(--primary);
+          border-radius: 50%;
+          animation: spin 1s linear infinite;
+        }
+
+        .loading-content h2 {
+          font-size: 2rem;
+          font-weight: 700;
+          background: var(--gradient-primary);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+
+        .loading-content p {
+          color: var(--text-secondary);
+          font-size: 1rem;
+        }
+
+        /* Error */
+        .error-container {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          min-height: 100vh;
+          padding: 2rem;
+        }
+
+        .error-content {
+          text-align: center;
+          max-width: 400px;
+        }
+
+        .error-icon {
+          font-size: 4rem;
+          margin-bottom: 1.5rem;
+          animation: shake 0.5s ease-in-out;
+        }
+
+        .retry-button {
+          background: var(--gradient-primary);
+          color: white;
+          border: none;
+          padding: 1rem 2rem;
+          border-radius: var(--radius-md);
+          font-size: 1rem;
+          font-weight: 600;
+          cursor: pointer;
+          transition: var(--transition);
+          box-shadow: var(--shadow-md);
+        }
+
+        /* Header */
+        .app-header {
+          background: var(--gradient-primary);
+          padding: 1.5rem;
+          box-shadow: var(--shadow-lg);
+          position: sticky;
+          top: 0;
+          z-index: 100;
+          backdrop-filter: blur(10px);
+        }
+
+        .header-top {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 1.5rem;
+        }
+
+        .app-title {
+          font-size: 1.75rem;
+          font-weight: 700;
+          color: white;
+          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+          line-height: 1;
+        }
+
+        .app-subtitle {
+          font-size: 0.8rem;
+          color: rgba(255, 255, 255, 0.8);
+          font-weight: 400;
+          margin-top: 0.25rem;
+        }
+
+        .refresh-btn {
+          background: rgba(255, 255, 255, 0.2);
+          border: none;
+          color: white;
+          padding: 0.75rem;
+          border-radius: 50%;
+          cursor: pointer;
+          transition: var(--transition);
+          font-size: 1.2rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          backdrop-filter: blur(10px);
+        }
+
+        .refresh-btn:hover:not(:disabled) {
+          background: rgba(255, 255, 255, 0.3);
+          transform: rotate(180deg);
+        }
+
+        /* Content */
+        .content {
+          flex: 1;
+          min-height: calc(100vh - 140px);
+        }
+
+        .screen {
+          display: none;
+          padding: 1rem;
+          animation: fadeIn 0.3s ease-out;
+        }
+
+        .screen.active {
+          display: block;
+        }
+
+        /* Cards */
+        .card {
+          background: var(--gradient-card);
+          padding: 1.5rem;
+          border-radius: var(--radius-lg);
+          border: 1px solid var(--border);
+          margin-bottom: 1rem;
+          box-shadow: var(--shadow-md);
+          transition: var(--transition);
+          position: relative;
+          overflow: hidden;
+        }
+
+        .card::before {
+          content: '';
+          position: absolute;
+          top: -50%;
+          left: -50%;
+          width: 200%;
+          height: 200%;
+          background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
+          transform: scale(0);
+          transition: transform 0.6s ease;
+        }
+
+        .card:hover::before {
+          transform: scale(1);
+        }
+
+        .card:hover {
+          transform: translateY(-4px);
+          box-shadow: var(--shadow-lg);
+          border-color: var(--primary-light);
+        }
+
+        .card-title {
+          font-size: 1.2rem;
+          font-weight: 700;
+          color: var(--text-primary);
+          margin-bottom: 1rem;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+
+        /* Balance Card - Особый стиль */
+        .balance-card {
+          background: var(--gradient-primary);
+          color: white;
+          text-align: center;
+          position: relative;
+          overflow: hidden;
+        }
+
+        .balance-card::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: -100%;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+          animation: shimmer 3s infinite;
+        }
+
+        .balance-amount {
+          font-size: 2.5rem;
+          font-weight: 700;
+          margin-bottom: 0.5rem;
+          position: relative;
+          z-index: 1;
+          animation: balanceGlow 2s ease-in-out infinite;
+        }
+
+        .balance-label {
+          opacity: 0.9;
+          font-size: 1rem;
+          position: relative;
+          z-index: 1;
+        }
+
+        /* Project Bank Progress */
+        .project-bank-card {
+          background: var(--gradient-success);
+          color: white;
+        }
+
+        .progress-bar {
+          background: rgba(255, 255, 255, 0.2);
+          border-radius: var(--radius-sm);
+          height: 20px;
+          margin: 1rem 0;
+          overflow: hidden;
+          position: relative;
+        }
+
+        .progress-fill {
+          background: rgba(255, 255, 255, 0.8);
+          height: 100%;
+          border-radius: var(--radius-sm);
+          transition: width 1s ease;
+          position: relative;
+        }
+
+        .progress-fill::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+          animation: shimmer 2s infinite;
+        }
+
+        .progress-text {
+          text-align: center;
+          font-weight: 600;
+          margin-top: 0.5rem;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+          display: flex;
+          gap: 1rem;
+          margin-bottom: 1.5rem;
+        }
+
+        .action-btn {
+          flex: 1;
+          background: var(--bg-card);
+          border: 1px solid var(--border);
+          color: var(--text-primary);
+          padding: 1rem;
+          border-radius: var(--radius-md);
+          cursor: pointer;
+          transition: var(--transition);
+          font-weight: 600;
+          font-size: 0.9rem;
+          position: relative;
+          overflow: hidden;
+        }
+
+        .action-btn::before {
+          content: '';
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 0;
+          height: 0;
+          background: rgba(63, 81, 181, 0.2);
+          border-radius: 50%;
+          transform: translate(-50%, -50%);
+          transition: all 0.6s ease;
+        }
+
+        .action-btn:active::before {
+          width: 300px;
+          height: 300px;
+        }
+
+        .action-btn:hover {
+          background: var(--primary);
+          transform: translateY(-2px);
+          box-shadow: var(--shadow-md);
+        }
+
+        .action-btn.primary {
+          background: var(--gradient-primary);
+          color: white;
+        }
+
+        .action-btn.success {
+          background: var(--gradient-success);
+          color: white;
+        }
+
+        .action-btn:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+          transform: none;
+        }
+
+        /* Portfolio Stats */
+        .portfolio-stats {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 1rem;
+          margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+          background: var(--gradient-card);
+          padding: 1.5rem;
+          border-radius: var(--radius-lg);
+          border: 1px solid var(--border);
+          text-align: center;
+          transition: var(--transition);
+          position: relative;
+          overflow: hidden;
+        }
+
+        .stat-card::before {
+          content: '';
+          position: absolute;
+          top: -50%;
+          left: -50%;
+          width: 200%;
+          height: 200%;
+          background: radial-gradient(circle, rgba(63, 81, 181, 0.1) 0%, transparent 70%);
+          transform: scale(0);
+          transition: transform 0.6s ease;
+        }
+
+        .stat-card:hover::before {
+          transform: scale(1);
+        }
+
+        .stat-card:hover {
+          transform: translateY(-4px);
+          box-shadow: var(--shadow-lg);
+          border-color: var(--primary-light);
+        }
+
+        .stat-value {
+          font-size: 1.8rem;
+          font-weight: 700;
+          margin-bottom: 0.5rem;
+          color: var(--primary-light);
+        }
+
+        .stat-label {
+          color: var(--text-secondary);
+          font-size: 0.9rem;
+          font-weight: 500;
+        }
+
+        /* Live Transactions */
+        .transactions-live {
+          background: var(--bg-card);
+          border-radius: var(--radius-md);
+          padding: 1rem;
+          border: 1px solid var(--border);
+          max-height: 300px;
+          overflow-y: auto;
+        }
+
+        .transaction-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 0.75rem 0;
+          border-bottom: 1px solid var(--border);
+          transition: var(--transition);
+        }
+
+        .transaction-item:last-child {
+          border-bottom: none;
+        }
+
+        .transaction-item:hover {
+          transform: translateX(8px);
+          background: rgba(63, 81, 181, 0.05);
+          border-radius: var(--radius-sm);
+          margin: 0 -0.5rem;
+          padding: 0.75rem 0.5rem;
+        }
+
+        .transaction-info {
+          display: flex;
+          flex-direction: column;
+        }
+
+        .transaction-type {
+          font-weight: 600;
+          margin-bottom: 0.25rem;
+          color: var(--text-primary);
+        }
+
+        .transaction-date {
+          font-size: 0.85rem;
+          color: var(--text-secondary);
+        }
+
+        .transaction-amount {
+          font-weight: 700;
+          font-size: 1rem;
+        }
+
+        .transaction-amount.positive {
+          color: var(--success);
+        }
+
+        .transaction-amount.negative {
+          color: var(--error);
+        }
+
+        /* Card Design (special screen) */
+        .card-design {
+          background: var(--gradient-primary);
+          color: white;
+          border-radius: var(--radius-xl);
+          padding: 2rem;
+          margin-bottom: 1.5rem;
+          position: relative;
+          overflow: hidden;
+          text-align: center;
+        }
+
+        .card-design::before {
+          content: '';
+          position: absolute;
+          top: -50%;
+          right: -50%;
+          width: 200%;
+          height: 200%;
+          background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+          animation: rotate 20s linear infinite;
+        }
+
+        .card-balance {
+          font-size: 2rem;
+          font-weight: 700;
+          margin-bottom: 1rem;
+          position: relative;
+          z-index: 1;
+        }
+
+        .card-subtitle {
+          opacity: 0.9;
+          position: relative;
+          z-index: 1;
+        }
+
+        /* Calculator */
+        .calculator {
+          background: var(--bg-card);
+          border: 1px solid var(--border);
+          border-radius: var(--radius-md);
+          padding: 1.5rem;
+          margin-bottom: 1.5rem;
+        }
+
+        .calc-input {
+          width: 100%;
+          background: var(--bg-elevated);
+          border: 1px solid var(--border);
+          color: var(--text-primary);
+          padding: 1rem;
+          border-radius: var(--radius-md);
+          font-size: 1rem;
+          margin-bottom: 1rem;
+          transition: var(--transition);
+        }
+
+        .calc-input:focus {
+          outline: none;
+          border-color: var(--primary);
+          box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.1);
+        }
+
+        .calc-result {
+          text-align: center;
+          font-size: 1.2rem;
+          font-weight: 600;
+          color: var(--success);
+          padding: 1rem;
+          background: rgba(76, 175, 80, 0.1);
+          border-radius: var(--radius-md);
+          border: 1px solid rgba(76, 175, 80, 0.2);
+        }
+
+        /* About Features */
+        .features-list {
+          margin: 1.5rem 0;
+        }
+
+        .feature-item {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          padding: 1rem 0;
+          border-bottom: 1px solid var(--border);
+          transition: var(--transition);
+        }
+
+        .feature-item:last-child {
+          border-bottom: none;
+        }
+
+        .feature-item:hover {
+          background: rgba(63, 81, 181, 0.05);
+          margin: 0 -1rem;
+          padding: 1rem;
+          border-radius: var(--radius-md);
+        }
+
+        .feature-icon {
+          font-size: 1.8rem;
+          width: 50px;
+          height: 50px;
+          border-radius: var(--radius-md);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(63, 81, 181, 0.1);
+          color: var(--primary);
+        }
+
+        .feature-content {
+          flex: 1;
+        }
+
+        .feature-title {
+          font-weight: 600;
+          margin-bottom: 0.25rem;
+          color: var(--text-primary);
+        }
+
+        .feature-description {
+          color: var(--text-secondary);
+          font-size: 0.9rem;
+        }
+
+        /* Partners */
+        .partner-stats {
+          display: flex;
+          justify-content: space-around;
+          margin: 2rem 0;
+          background: var(--bg-card);
+          border-radius: var(--radius-md);
+          padding: 1.5rem;
+          border: 1px solid var(--border);
+        }
+
+        .partner-stat {
+          text-align: center;
+        }
+
+        .partner-stat-value {
+          font-size: 2rem;
+          font-weight: 700;
+          color: var(--primary);
+          margin-bottom: 0.5rem;
+        }
+
+        .partner-stat-label {
+          font-size: 0.9rem;
+          color: var(--text-secondary);
+        }
+
+        .partner-levels {
+          background: var(--bg-card);
+          border: 1px solid var(--border);
+          border-radius: var(--radius-md);
+          padding: 1.5rem;
+          margin: 1.5rem 0;
+        }
+
+        .level-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 1rem 0;
+          border-bottom: 1px solid var(--border);
+          transition: var(--transition);
+        }
+
+        .level-item:last-child {
+          border-bottom: none;
+        }
+
+        .level-item:hover {
+          background: rgba(63, 81, 181, 0.05);
+          margin: 0 -1rem;
+          padding: 1rem;
+          border-radius: var(--radius-md);
+        }
+
+        .level-info {
+          display: flex;
+          flex-direction: column;
+        }
+
+        .level-title {
+          font-weight: 600;
+          margin-bottom: 0.25rem;
+        }
+
+        .level-desc {
+          font-size: 0.85rem;
+          color: var(--text-secondary);
+        }
+
+        .level-rate {
+          font-size: 1.2rem;
+          font-weight: 700;
+        }
+
+        .level-rate.gold { color: #FFD700; }
+        .level-rate.silver { color: #C0C0C0; }
+        .level-rate.bronze { color: #CD7F32; }
+
+        /* Referral Link */
+        .referral-link {
+          background: var(--bg-elevated);
+          padding: 1rem;
+          border-radius: var(--radius-md);
+          border: 1px solid var(--border-light);
+          margin: 1rem 0;
+        }
+
+        .ref-code {
+          background: var(--bg-primary);
+          border: 1px solid var(--border);
+          color: var(--primary-light);
+          padding: 0.75rem;
+          border-radius: var(--radius-sm);
+          font-size: 0.9rem;
+          font-weight: 600;
+          font-family: 'Monaco', 'Menlo', monospace;
+          word-break: break-all;
+          margin-bottom: 1rem;
+        }
+
+        .copy-btn {
+          width: 100%;
+          background: var(--gradient-primary);
+          color: white;
+          border: none;
+          padding: 0.75rem;
+          border-radius: var(--radius-sm);
+          cursor: pointer;
+          font-weight: 600;
+          transition: var(--transition);
+        }
+
+        .copy-btn:hover {
+          transform: translateY(-2px);
+          box-shadow: var(--shadow-md);
+        }
+
+        /* Footer Links */
+        .footer-links {
+          display: flex;
+          justify-content: center;
+          gap: 2rem;
+          margin-top: 2rem;
+          padding: 1.5rem;
+          background: var(--bg-card);
+          border-radius: var(--radius-md);
+          border: 1px solid var(--border);
+        }
+
+        .footer-link {
+          color: var(--primary);
+          text-decoration: none;
+          font-weight: 600;
+          transition: var(--transition);
+          padding: 0.5rem 1rem;
+          border-radius: var(--radius-sm);
+        }
+
+        .footer-link:hover {
+          color: var(--primary-light);
+          background: rgba(63, 81, 181, 0.1);
+          transform: translateY(-2px);
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          background: var(--bg-secondary);
+          border-top: 1px solid var(--border);
+          padding: 0.75rem 0;
+          display: flex;
+          justify-content: space-around;
+          align-items: center;
+          backdrop-filter: blur(20px);
+          z-index: 1000;
+          box-shadow: var(--shadow-lg);
+        }
+
+        .nav-item {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 0.25rem;
+          cursor: pointer;
+          padding: 0.5rem;
+          border-radius: var(--radius-md);
+          transition: var(--transition);
+          min-width: 60px;
+        }
+
+        .nav-item.active {
+          background: var(--gradient-primary);
+          color: white;
+          transform: translateY(-2px);
+          box-shadow: var(--shadow-md);
+        }
+
+        .nav-item:not(.active) {
+          color: var(--text-secondary);
+        }
+
+        .nav-item:hover:not(.active) {
+          background: var(--bg-elevated);
+          color: var(--text-primary);
+        }
+
+        .nav-icon {
+          font-size: 1.5rem;
+        }
+
+        .nav-label {
+          font-size: 0.7rem;
+          font-weight: 500;
+        }
+
+        /* Special card nav button */
+        .nav-item.card-nav {
+          background: var(--gradient-primary);
+          color: white;
+          border-radius: 50%;
+          padding: 1rem;
+          margin: 0 0.5rem;
+          transform: scale(1.2);
+          box-shadow: var(--shadow-lg);
+        }
+
+        .nav-item.card-nav .nav-icon {
+          font-size: 2rem;
+        }
+
+        .nav-item.card-nav:hover {
+          background: var(--gradient-primary);
+          transform: scale(1.25);
+        }
+
+        .nav-item.card-nav.active {
+          background: var(--primary-dark);
+          transform: scale(1.2);
+        }
+
+        /* Empty states */
+        .empty-state {
+          text-align: center;
+          padding: 3rem 1rem;
+          color: var(--text-secondary);
+        }
+
+        .empty-icon {
+          font-size: 4rem;
+          margin-bottom: 1rem;
+          opacity: 0.7;
+        }
+
+        .empty-title {
+          font-size: 1.2rem;
+          font-weight: 600;
+          margin-bottom: 0.5rem;
+          color: var(--text-primary);
+        }
+
+        .empty-desc {
+          font-size: 0.9rem;
+          color: var(--text-muted);
+        }
+
+        /* Animations */
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+
+        @keyframes bounce {
+          0%, 20%, 53%, 80%, 100% { transform: translateY(0); }
+          40%, 43% { transform: translateY(-8px); }
+          70% { transform: translateY(-4px); }
+          90% { transform: translateY(-2px); }
+        }
+
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          25% { transform: translateX(-5px); }
+          75% { transform: translateX(5px); }
+        }
+
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes shimmer {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(100%); }
+        }
+
+        @keyframes rotate {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+
+        @keyframes balanceGlow {
+          0% { text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3); }
+          50% { text-shadow: 0 2px 20px rgba(63, 81, 181, 0.4); }
+          100% { text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3); }
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+          .balance-amount {
+            font-size: 2rem;
+          }
+          
+          .portfolio-stats {
+            grid-template-columns: 1fr;
+          }
+          
+          .action-buttons {
+            flex-direction: column;
+            gap: 0.75rem;
+          }
+          
+          .partner-stats {
+            flex-direction: column;
+            gap: 1rem;
+          }
+          
+          .footer-links {
+            flex-direction: column;
+            gap: 1rem;
+            text-align: center;
+          }
+
+          .nav-item.card-nav {
+            transform: scale(1.1);
+          }
+
+          .nav-item.card-nav:hover {
+            transform: scale(1.15);
+          }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+          width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+          background: var(--bg-secondary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+          background: var(--primary);
+          border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+          background: var(--primary-light);
+        }
+
+        /* Selection */
+        ::selection {
+          background: var(--primary-light);
+          color: white;
+        }
     </style>
 </head>
 <body>
     <div id="root">
         <div class="loading-container">
-            <div class="loading-logo">🚀</div>
-            <div class="loading-spinner"></div>
-            <h2>TON STOCKER</h2>
-            <p>Загрузка приложения...</p>
+            <div class="loading-content">
+                <div class="loading-logo">🚀</div>
+                <div class="loading-spinner"></div>
+                <h2>TON STOCKER</h2>
+                <p>Загрузка приложения...</p>
+            </div>
         </div>
     </div>
 
@@ -1087,19 +1027,24 @@
           const [error, setError] = useState(null);
           const [activeScreen, setActiveScreen] = useState('main');
           const [calcAmount, setCalcAmount] = useState('');
-          const [projectProgress, setProjectProgress] = useState({ current: 0, target: 100000, progress: 0, rate: 5.0 });
+          const [projectProgress, setProjectProgress] = useState({ 
+            current: 0, 
+            target: 100000, 
+            progress: 0, 
+            rate: 5.0 
+          });
 
           useEffect(() => {
             const initApp = async () => {
               try {
-                let userId = 652017464;
+                let userId = 652017464; // Fallback для тестирования
                 
                 if (window.Telegram && window.Telegram.WebApp) {
                   const tg = window.Telegram.WebApp;
                   tg.ready();
                   tg.expand();
-                  tg.setBackgroundColor('#0F0F0F');
-                  tg.setHeaderColor('#0F0F0F');
+                  tg.setBackgroundColor('#0a0a0a');
+                  tg.setHeaderColor('#0a0a0a');
                   
                   userId = tg.initDataUnsafe?.user?.id || 652017464;
                 }
@@ -1133,9 +1078,9 @@
               if (response.data.success) {
                 setUserData(response.data.data);
                 
-                // Calculate project progress (mock data - you should get this from API)
+                // Рассчитываем прогресс банка проекта
                 const totalInvested = response.data.data.total_invested * USDT_TO_RUB;
-                let progress = (totalInvested / 100000) * 100;
+                let progress = 0;
                 let currentRate = 5.0;
                 let target = 100000;
                 
@@ -1151,6 +1096,8 @@
                   currentRate = 6.2;
                   target = 250000;
                   progress = (totalInvested / 250000) * 100;
+                } else {
+                  progress = (totalInvested / 100000) * 100;
                 }
                 
                 setProjectProgress({
@@ -1213,58 +1160,58 @@
           };
 
           const calculateProfit = (amount) => {
-            const dailyRate = projectProgress.rate / 100;
-            return amount * dailyRate;
+            return amount * (projectProgress.rate / 100);
           };
 
           if (loading && !userData) {
             return React.createElement('div', { className: 'loading-container' },
-              React.createElement('div', { className: 'loading-logo' }, '🚀'),
-              React.createElement('div', { className: 'loading-spinner' }),
-              React.createElement('h2', null, 'TON STOCKER'),
-              React.createElement('p', null, 'Загрузка приложения...')
+              React.createElement('div', { className: 'loading-content' },
+                React.createElement('div', { className: 'loading-logo' }, '🚀'),
+                React.createElement('div', { className: 'loading-spinner' }),
+                React.createElement('h2', null, 'TON STOCKER'),
+                React.createElement('p', null, 'Загрузка приложения...')
+              )
             );
           }
 
           if (error && !userData) {
-            return React.createElement('div', { className: 'loading-container' },
-              React.createElement('div', { style: { fontSize: '4rem' } }, '⚠️'),
-              React.createElement('h2', null, 'Ошибка подключения'),
-              React.createElement('p', null, error),
-              React.createElement('button', {
-                onClick: () => {
-                  setError(null);
-                  setLoading(true);
-                  loadUserData(652017464);
-                },
-                style: {
-                  background: 'var(--primary)',
-                  color: 'white',
-                  border: 'none',
-                  padding: '1rem 2rem',
-                  borderRadius: '12px',
-                  cursor: 'pointer',
-                  marginTop: '1rem'
-                }
-              }, '🔄 Повторить')
+            return React.createElement('div', { className: 'error-container' },
+              React.createElement('div', { className: 'error-content' },
+                React.createElement('div', { className: 'error-icon' }, '⚠️'),
+                React.createElement('h2', null, 'Ошибка подключения'),
+                React.createElement('p', null, error),
+                React.createElement('button', {
+                  className: 'retry-button',
+                  onClick: () => {
+                    setError(null);
+                    setLoading(true);
+                    loadUserData(652017464);
+                  }
+                }, '🔄 Повторить попытку')
+              )
             );
           }
 
           return React.createElement('div', { className: 'app' },
             
             // Header
-            React.createElement('header', { className: 'header' },
-              React.createElement('h1', null, 'TON STOCKER'),
-              React.createElement('button', {
-                className: 'refresh-btn',
-                onClick: () => loadUserData(userData.user_id)
-              }, '🔄')
+            React.createElement('header', { className: 'app-header' },
+              React.createElement('div', { className: 'header-top' },
+                React.createElement('div', null,
+                  React.createElement('h1', { className: 'app-title' }, 'TON STOCKER'),
+                  React.createElement('div', { className: 'app-subtitle' }, 'AI Investment Platform')
+                ),
+                React.createElement('button', {
+                  className: 'refresh-btn',
+                  onClick: () => loadUserData(userData.user_id)
+                }, '🔄')
+              )
             ),
 
             // Content
             React.createElement('div', { className: 'content' },
               
-              // Main Screen
+              // Main Screen - Главная
               React.createElement('div', { 
                 className: `screen ${activeScreen === 'main' ? 'active' : ''}` 
               },
@@ -1273,32 +1220,28 @@
                   React.createElement('div', { className: 'balance-amount' },
                     formatCurrency((userData?.balance || 0) * USDT_TO_RUB)
                   ),
-                  React.createElement('div', { className: 'balance-label' },
-                    'Всего активов'
-                  )
+                  React.createElement('div', { className: 'balance-label' }, 'Всего активов')
                 ),
                 
                 // Action Buttons
                 React.createElement('div', { className: 'action-buttons' },
-                  React.createElement('button', { className: 'action-btn' }, '💳 Пополнить'),
-                  React.createElement('button', { 
-                    className: 'action-btn',
-                    onClick: () => setActiveScreen('portfolio')
-                  }, '📊 Портфель')
+                  React.createElement('button', { className: 'action-btn primary' }, '💳 Пополнить')
                 ),
                 
-                // Project Bank
+                // Project Bank - Банк проекта
                 React.createElement('div', { className: 'card project-bank-card' },
                   React.createElement('div', { className: 'card-title' }, '🏦 Банк проекта'),
                   React.createElement('div', null, `Цель: ${formatCurrency(projectProgress.target)}`),
+                  React.createElement('div', null, `Собрано: ${formatCurrency(projectProgress.current)}`),
                   React.createElement('div', { className: 'progress-bar' },
                     React.createElement('div', {
                       className: 'progress-fill',
                       style: { width: `${projectProgress.progress}%` }
                     })
                   ),
-                  React.createElement('div', null, `Прогресс: ${projectProgress.progress.toFixed(1)}%`),
-                  React.createElement('div', null, `Текущая ставка: ${projectProgress.rate}% в день`)
+                  React.createElement('div', { className: 'progress-text' },
+                    `${projectProgress.progress.toFixed(1)}% • Ставка: ${projectProgress.rate}% в день`
+                  )
                 ),
                 
                 // Live Transactions
@@ -1328,14 +1271,16 @@
                           )
                         )
                       ) : 
-                      React.createElement('div', { style: { textAlign: 'center', color: 'var(--text-secondary)' } },
-                        '📝 Пока нет транзакций'
+                      React.createElement('div', { className: 'empty-state' },
+                        React.createElement('div', { className: 'empty-icon' }, '📝'),
+                        React.createElement('div', { className: 'empty-title' }, 'Пока нет транзакций'),
+                        React.createElement('div', { className: 'empty-desc' }, 'История операций будет отображаться здесь')
                       )
                   )
                 )
               ),
 
-              // Portfolio Screen
+              // Portfolio Screen - Портфель
               React.createElement('div', { 
                 className: `screen ${activeScreen === 'portfolio' ? 'active' : ''}` 
               },
@@ -1359,9 +1304,10 @@
                     `💰 Накоплено: ${formatCurrency((userData?.current_profit || 0) * USDT_TO_RUB)}`
                   ),
                   React.createElement('button', {
-                    className: 'collect-btn',
+                    className: 'action-btn success',
                     onClick: collectProfit,
-                    disabled: (userData?.current_profit || 0) <= 0
+                    disabled: (userData?.current_profit || 0) <= 0,
+                    style: { width: '100%', padding: '1.5rem' }
                   }, '💎 Собрать прибыль')
                 ),
                 
@@ -1369,20 +1315,23 @@
                 React.createElement('div', { className: 'footer-links' },
                   React.createElement('a', { 
                     href: 'https://t.me/support_ton_stocker', 
-                    className: 'footer-link' 
+                    className: 'footer-link',
+                    target: '_blank'
                   }, '📞 Поддержка'),
                   React.createElement('a', { 
                     href: 'https://t.me/ton_stocker_channel', 
-                    className: 'footer-link' 
+                    className: 'footer-link',
+                    target: '_blank'
                   }, '📢 Канал'),
                   React.createElement('a', { 
                     href: 'https://t.me/ton_stocker_chat', 
-                    className: 'footer-link' 
+                    className: 'footer-link',
+                    target: '_blank'
                   }, '💭 Чат')
                 )
               ),
 
-              // Card Screen
+              // Card Screen - Карта
               React.createElement('div', { 
                 className: `screen ${activeScreen === 'card' ? 'active' : ''}` 
               },
@@ -1390,16 +1339,16 @@
                   React.createElement('div', { className: 'card-balance' },
                     formatCurrency((userData?.balance || 0) * USDT_TO_RUB)
                   ),
-                  React.createElement('div', null, 'Ваш баланс')
+                  React.createElement('div', { className: 'card-subtitle' }, 'Ваш баланс')
                 ),
                 
-                React.createElement('div', { className: 'card-actions' },
-                  React.createElement('button', { className: 'action-btn' }, '💳 Пополнить'),
+                React.createElement('div', { className: 'action-buttons' },
+                  React.createElement('button', { className: 'action-btn primary' }, '💳 Пополнить'),
                   React.createElement('button', { className: 'action-btn' }, '💸 Вывести')
                 ),
                 
                 React.createElement('div', { className: 'calculator' },
-                  React.createElement('h3', null, '🧮 Калькулятор прибыли'),
+                  React.createElement('h3', { className: 'card-title' }, '🧮 Калькулятор прибыли'),
                   React.createElement('input', {
                     type: 'number',
                     placeholder: 'Введите сумму в рублях',
@@ -1413,7 +1362,7 @@
                 ),
                 
                 React.createElement('div', { className: 'card' },
-                  React.createElement('div', { className: 'card-title' }, '📋 Последние транзакции'),
+                  React.createElement('div', { className: 'card-title' }, '📋 Ваши последние транзакции'),
                   React.createElement('div', { className: 'transactions-live' },
                     userData?.recent_transactions?.length > 0 ? 
                       userData.recent_transactions.slice(0, 8).map((tx, index) =>
@@ -1438,37 +1387,42 @@
                           )
                         )
                       ) : 
-                      React.createElement('div', { style: { textAlign: 'center', color: 'var(--text-secondary)' } },
-                        '📝 Пока нет транзакций'
+                      React.createElement('div', { className: 'empty-state' },
+                        React.createElement('div', { className: 'empty-icon' }, '📝'),
+                        React.createElement('div', { className: 'empty-title' }, 'Пока нет транзакций'),
+                        React.createElement('div', { className: 'empty-desc' }, 'История операций будет отображаться здесь')
                       )
                   )
                 ),
                 
-                                // Footer Links
+                // Footer Links
                 React.createElement('div', { className: 'footer-links' },
                   React.createElement('a', { 
                     href: 'https://t.me/support_ton_stocker', 
-                    className: 'footer-link' 
+                    className: 'footer-link',
+                    target: '_blank'
                   }, '📞 Поддержка'),
                   React.createElement('a', { 
                     href: 'https://t.me/ton_stocker_channel', 
-                    className: 'footer-link' 
+                    className: 'footer-link',
+                    target: '_blank'
                   }, '📢 Канал'),
                   React.createElement('a', { 
                     href: 'https://t.me/ton_stocker_chat', 
-                    className: 'footer-link' 
+                    className: 'footer-link',
+                    target: '_blank'
                   }, '💭 Чат')
                 )
               ),
 
-              // About Screen
+              // About Screen - О проекте
               React.createElement('div', { 
                 className: `screen ${activeScreen === 'about' ? 'active' : ''}` 
               },
-                React.createElement('div', { className: 'about-content' },
-                  React.createElement('div', { className: 'about-icon' }, '💎'),
-                  React.createElement('h2', null, 'TON STOCKER'),
-                  React.createElement('div', { className: 'about-text' },
+                React.createElement('div', { className: 'card', style: { textAlign: 'center' } },
+                  React.createElement('div', { style: { fontSize: '4rem', marginBottom: '1rem' } }, '💎'),
+                  React.createElement('h2', { style: { marginBottom: '1rem' } }, 'TON STOCKER'),
+                  React.createElement('p', { style: { color: 'var(--text-secondary)', lineHeight: '1.8' } },
                     'Добро пожаловать в TON STOCKER — современную инвестиционную платформу, которая поможет вам приумножить ваши средства с помощью передовых AI-технологий.'
                   )
                 ),
@@ -1478,34 +1432,30 @@
                   React.createElement('div', { className: 'features-list' },
                     React.createElement('div', { className: 'feature-item' },
                       React.createElement('div', { className: 'feature-icon' }, '📈'),
-                      React.createElement('div', null,
-                        React.createElement('strong', null, 'Высокая доходность'),
-                        React.createElement('br'),
-                        'До 8.6% в день при достижении целей проекта'
+                      React.createElement('div', { className: 'feature-content' },
+                        React.createElement('div', { className: 'feature-title' }, 'Высокая доходность'),
+                        React.createElement('div', { className: 'feature-description' }, 'До 8.6% в день при достижении целей проекта')
                       )
                     ),
                     React.createElement('div', { className: 'feature-item' },
                       React.createElement('div', { className: 'feature-icon' }, '🔒'),
-                      React.createElement('div', null,
-                        React.createElement('strong', null, 'Безопасность'),
-                        React.createElement('br'),
-                        'Надежная защита ваших инвестиций'
+                      React.createElement('div', { className: 'feature-content' },
+                        React.createElement('div', { className: 'feature-title' }, 'Безопасность'),
+                        React.createElement('div', { className: 'feature-description' }, 'Надежная защита ваших инвестиций')
                       )
                     ),
                     React.createElement('div', { className: 'feature-item' },
                       React.createElement('div', { className: 'feature-icon' }, '⚡'),
-                      React.createElement('div', null,
-                        React.createElement('strong', null, 'Быстрые выплаты'),
-                        React.createElement('br'),
-                        'Ежедневные выплаты прибыли'
+                      React.createElement('div', { className: 'feature-content' },
+                        React.createElement('div', { className: 'feature-title' }, 'Быстрые выплаты'),
+                        React.createElement('div', { className: 'feature-description' }, 'Ежедневные выплаты прибыли')
                       )
                     ),
                     React.createElement('div', { className: 'feature-item' },
                       React.createElement('div', { className: 'feature-icon' }, '🏆'),
-                      React.createElement('div', null,
-                        React.createElement('strong', null, 'Партнерская программа'),
-                        React.createElement('br'),
-                        '3-уровневая система вознаграждений'
+                      React.createElement('div', { className: 'feature-content' },
+                        React.createElement('div', { className: 'feature-title' }, 'Партнерская программа'),
+                        React.createElement('div', { className: 'feature-description' }, '3-уровневая система вознаграждений')
                       )
                     )
                   )
@@ -1528,20 +1478,23 @@
                 React.createElement('div', { className: 'footer-links' },
                   React.createElement('a', { 
                     href: 'https://t.me/support_ton_stocker', 
-                    className: 'footer-link' 
+                    className: 'footer-link',
+                    target: '_blank'
                   }, '📞 Поддержка'),
                   React.createElement('a', { 
                     href: 'https://t.me/ton_stocker_channel', 
-                    className: 'footer-link' 
+                    className: 'footer-link',
+                    target: '_blank'
                   }, '📢 Канал'),
                   React.createElement('a', { 
                     href: 'https://t.me/ton_stocker_chat', 
-                    className: 'footer-link' 
+                    className: 'footer-link',
+                    target: '_blank'
                   }, '💭 Чат')
                 )
               ),
 
-              // Partners Screen
+              // Partners Screen - Партнеры
               React.createElement('div', { 
                 className: `screen ${activeScreen === 'partners' ? 'active' : ''}` 
               },
@@ -1574,82 +1527,66 @@
                   ),
                   React.createElement('div', { className: 'partner-levels' },
                     React.createElement('div', { className: 'level-item' },
-                      React.createElement('div', null,
-                        React.createElement('strong', null, '🥇 1 уровень'),
-                        React.createElement('br'),
-                        React.createElement('small', { style: { color: 'var(--text-secondary)' } }, 
-                          'Прямые приглашения')
+                      React.createElement('div', { className: 'level-info' },
+                        React.createElement('div', { className: 'level-title' }, '🥇 1 уровень'),
+                        React.createElement('div', { className: 'level-desc' }, 'Прямые приглашения')
                       ),
-                      React.createElement('div', { style: { fontSize: '1.2rem', fontWeight: '700', color: 'var(--success)' } }, 
-                        '15%')
+                      React.createElement('div', { className: 'level-rate gold' }, '15%')
                     ),
                     React.createElement('div', { className: 'level-item' },
-                      React.createElement('div', null,
-                        React.createElement('strong', null, '🥈 2 уровень'),
-                        React.createElement('br'),
-                        React.createElement('small', { style: { color: 'var(--text-secondary)' } }, 
-                          'Рефералы ваших рефералов')
+                      React.createElement('div', { className: 'level-info' },
+                        React.createElement('div', { className: 'level-title' }, '🥈 2 уровень'),
+                        React.createElement('div', { className: 'level-desc' }, 'Рефералы ваших рефералов')
                       ),
-                      React.createElement('div', { style: { fontSize: '1.2rem', fontWeight: '700', color: 'var(--warning)' } }, 
-                        '5%')
+                      React.createElement('div', { className: 'level-rate silver' }, '5%')
                     ),
                     React.createElement('div', { className: 'level-item' },
-                      React.createElement('div', null,
-                        React.createElement('strong', null, '🥉 3 уровень'),
-                        React.createElement('br'),
-                        React.createElement('small', { style: { color: 'var(--text-secondary)' } }, 
-                          'Рефералы 3-го уровня')
+                      React.createElement('div', { className: 'level-info' },
+                        React.createElement('div', { className: 'level-title' }, '🥉 3 уровень'),
+                        React.createElement('div', { className: 'level-desc' }, 'Рефералы 3-го уровня')
                       ),
-                      React.createElement('div', { style: { fontSize: '1.2rem', fontWeight: '700', color: 'var(--primary)' } }, 
-                        '1%')
+                      React.createElement('div', { className: 'level-rate bronze' }, '1%')
                     )
                   )
                 ),
                 
                 React.createElement('div', { className: 'card' },
                   React.createElement('div', { className: 'card-title' }, '🔗 Ваша реферальная ссылка'),
-                  React.createElement('div', { 
-                    style: { 
-                      background: 'var(--bg-elevated)',
-                      padding: '1rem',
-                      borderRadius: 'var(--radius)',
-                      fontFamily: 'monospace',
-                      fontSize: '0.9rem',
-                      wordBreak: 'break-all',
-                      marginBottom: '1rem',
-                      border: '1px solid var(--border)'
-                    }
-                  },
-                    `https://t.me/your_bot?start=${userData?.referral_code || 'LOADING'}`
-                  ),
-                  React.createElement('button', {
-                    className: 'action-btn',
-                    style: { width: '100%', background: 'var(--primary)', color: 'white' },
-                    onClick: () => {
-                      const link = `https://t.me/your_bot?start=${userData?.referral_code}`;
-                      if (navigator.clipboard) {
-                        navigator.clipboard.writeText(link);
-                        alert('📋 Ссылка скопирована!');
-                      } else {
-                        alert('Ссылка: ' + link);
+                  React.createElement('div', { className: 'referral-link' },
+                    React.createElement('div', { className: 'ref-code' },
+                      `https://t.me/your_bot?start=${userData?.referral_code || 'LOADING'}`
+                    ),
+                    React.createElement('button', {
+                      className: 'copy-btn',
+                      onClick: () => {
+                        const link = `https://t.me/your_bot?start=${userData?.referral_code}`;
+                        if (navigator.clipboard) {
+                          navigator.clipboard.writeText(link);
+                          alert('📋 Ссылка скопирована!');
+                        } else {
+                          alert('Ссылка: ' + link);
+                        }
                       }
-                    }
-                  }, '📋 Скопировать ссылку')
+                    }, '📋 Скопировать ссылку')
+                  )
                 ),
                 
                 // Footer Links
                 React.createElement('div', { className: 'footer-links' },
                   React.createElement('a', { 
                     href: 'https://t.me/support_ton_stocker', 
-                    className: 'footer-link' 
+                    className: 'footer-link',
+                    target: '_blank'
                   }, '📞 Поддержка'),
                   React.createElement('a', { 
                     href: 'https://t.me/ton_stocker_channel', 
-                    className: 'footer-link' 
+                    className: 'footer-link',
+                    target: '_blank'
                   }, '📢 Канал'),
                   React.createElement('a', { 
                     href: 'https://t.me/ton_stocker_chat', 
-                    className: 'footer-link' 
+                    className: 'footer-link',
+                    target: '_blank'
                   }, '💭 Чат')
                 )
               )
@@ -1712,5 +1649,3 @@
     </script>
 </body>
 </html>
-
-
