@@ -1,0 +1,6 @@
+name = "ton-stocker"
+compatibility_date = "2025-10-02"
+pages_build_output_dir = "./"
+
+[site]
+bucket = "./"
