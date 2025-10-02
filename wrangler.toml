@@ -1,4 +1,4 @@
-name = "ton-stocker"
+name = 'webapp'
 compatibility_date = "2025-10-02"
 pages_build_output_dir = "./"
 
